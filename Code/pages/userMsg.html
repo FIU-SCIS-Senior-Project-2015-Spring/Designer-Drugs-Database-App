@@ -1,0 +1,16 @@
+<!-- User Msg -->
+	<div class="col-lg-9"  id="userMainMsg"  ng-controller="ControllerAccountMsg">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3>Account Messages</h3>
+			</div>
+			<div class="panel-body">
+				<div class="list-group">
+				  <a href="#" ng-Click="accnt_One_msg(items.emailNo)" class="list-group-item" ng-repeat="items in msgs">
+					<h4 class="list-group-item-heading">From: {{items.from}}</h4>
+					<p class="list-group-item-text">Subject: {{items.subject}}</p>
+				  </a>
+				</div>
+			</div>
+		</div>
+	</div>

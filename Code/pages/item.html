@@ -1,0 +1,61 @@
+<!--Result one item-->
+	<div class="row col-lg-10 col-md-offset-1"  id="oneResult" ng-controller="ControllerResultOne">
+		<div class="col-sm-12">
+			<div class=" col-sm-4 col-md-offset-1">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<img src="img/drug.png" alt="..." class="img-thumbnail">
+					</div>
+				</div>
+			</div>
+
+			<div class=" col-sm-6 ">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						Name: {{desc.cName}}
+					</div>
+					<div class="panel-body">
+						<p>Formula: {{desc.cFormula}}</p>
+						<p>Mass: {{desc.cMass}}</p>
+						<p>Precursor: {{desc.cPrecursor}}</p>
+						<p>Frag: {{desc.cFrag}}</p>
+						<p>RT: {{desc.cRT}}</p>
+						<p>CAS: {{desc.cCas}}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-12">
+			<div class=" col-sm-4 col-md-offset-1">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<img src="img/graph.png" alt="..." class="img-thumbnail">
+					</div>
+				</div>
+			</div>
+
+			<div class=" col-sm-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						Trascendals
+					</div>
+					<div class="panel-body">
+						<table class="table table-striped">
+						  <tr class="success">
+							<td>Product</td>
+							<td>CE</td> 
+							<td>Abund.</td>
+							<td>R.Intens.</td>
+						  </tr>  
+						  <tr ng-repeat="items in trans">
+							<td>{{items.tProduct}}</td>
+							<td>{{items.tCE}}</td> 
+							<td>{{items.tAbundance}}</td>
+							<td>{{items.tRIInt}}</td>
+						  </tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>

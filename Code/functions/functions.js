@@ -1,5 +1,6 @@
 var sys = {q:[], r:[]};
 
+/*
 function show_Page(index) {
 	$("#main").hide().removeClass('hide');
 	$("#login").hide().removeClass('hidden');
@@ -100,38 +101,81 @@ function show_Page(index) {
 
 	}
 }
+*/
 ////////////////////////////ANGULAR JS///////////////////////////////
 var myapp = angular.module('mainApp', ['angularFileUpload','ngRoute']);
 
 myapp.controller('ControllerNavbar', function($scope) {
 
-	$scope.clickLogin= function(){
-		show_Page(1);
-	}
-
 	$scope.clickLogout= function(){
-		show_Page(8);
-	}	
-	
-	$scope.clickHome= function(){
-		show_Page(0);
-	}		
-	
-	$scope.clickAccount= function(){
-		show_Page(7);
+	$.ajax({
+		type: "POST",
+		url: "request/accntLogout.php",
+		data: {}
+		})
+		.done(function( msg ) {
+			show_Page(8);
+		});
 	}
 
-	$scope.clickAbout= function(){
-		show_Page(4);
-	}	
+});                                    
 	
-	$scope.clickContact= function(){
-		show_Page(3);
-	}	
+    myapp.config(['$routeProvider',function($routeProvider) {
+        $routeProvider
+            .when('/:page', {
+                //templateUrl : 'pages/about.html',
+				templateUrl : function(route){
+				console.log(route);
+				return "pages/"+route.page+".html";
+				},
+                controller  : 'MyController'
+            })
+			.otherwise({
+                redirectTo : '/home'
+            });
+    }]);
+
+myapp.controller('MyController', function($scope, $http) {
 	
+    $scope.r = [];
+    var len_q = sys.q.length;
+    for (var i = 0; i < len_q; i++) {
+        $http(sys.q[i]).success(function(data, status, headers, config) {
+            $.each(sys.q, function(index, obj) {
+                if (config.url == obj.url) {
+                    //BEGIN: Hash Map
+                    if (obj.hashmap) {
+                        // Hash Map Debug
+                        if (obj.hashmapdebug) console.log("Hash Map Input .q["+index+"]", data);
+                        // Removing leading and trailing slashes
+                        obj.hashmap = obj.hashmap.replace(/^\/+|\/+$/g, '');
+                        var p = obj.hashmap.split("/"); // Path array
+                        var len_p = p.length; // Path deep
+                        $scope.r[index] = []; // Init
+                        //BEGIN: Do the magic
+                        for (var j = 0; j < len_p; j++) {
+                            var last = (j == len_p - 1); // Last element
+                            if (data[p[j]]) { // Object child
+                                if (last) $scope.r[index][data[p[j]]] = data;
+                                else data = data[p[j]]; // Reducing hierarchy
+                            } else if (angular.isDefined(data[0]) && data[0][p[j]]) { // Array child
+                                if (last) angular.forEach(data, function(v) { $scope.r[index][v[p[j]]] = v; });
+                                else data = data[0][p[j]]; // Reducing hierarchy
+                            } else break;
+                        }
+                        //END: Do the magic
+                        // Hash Map Debug
+                        if (obj.hashmapdebug) console.log("Hash Map Output r["+index+"]", $scope.r[index]);
+                    //END: Hash Map
+                    } else $scope.r[index] = data; // No hashmap
+                    return false; // Break the $.each()
+                }
+            });
+        });
+    }
 	
 });
-
+	
 myapp.controller('ControllerMain', function($scope) {
 	$scope.searchItem= function(){
 		var $scope = angular.element($("#resultList")).scope();
@@ -148,7 +192,7 @@ myapp.controller('ControllerLogin', function($scope) {
 	$scope.Login= function(){
 	$.ajax({
 	  type: "POST",
-	  url: "database/accntLogin.php",
+	  url: "request/accntLogin.php",
 	  data: { 
 	  email: $scope.email,
 	  password: $scope.password}
@@ -161,7 +205,7 @@ myapp.controller('ControllerLogin', function($scope) {
 			$('#mWSignUPInfo').modal('show');
 		}else{
 		$scope.userinfo = msg; 
-		//mydesignerdrug.userinfo = msg;
+		mydesignerdrug.userinfo = msg;
 		
 		var $scope2 = angular.element($("#accntMenu")).scope();
 	   		$scope2.$apply(function(){
@@ -212,7 +256,7 @@ myapp.controller('ControllerResultList', function($scope) {
 	$scope.showList= function(){
 	$.ajax({
 	  type: "POST",
-	  url: "database/searchResultList.php",
+	  url: "request/searchResultList.php",
 	  async: false,
 	  data: {}
 	})
@@ -238,7 +282,7 @@ myapp.controller('ControllerResultOne', function($scope) {
 	$scope.showDescription= function(cid){
 	  $.ajax({
 	  type: "POST",
-	  url: "database/searchResultOneDesc.php",
+	  url: "request/searchResultOneDesc.php",
 	  async: false,
 	  data: {Cid: cid}
 	})
@@ -250,7 +294,7 @@ myapp.controller('ControllerResultOne', function($scope) {
 	$scope.showTransition= function(cid){
 	$.ajax({
 	  type: "POST",
-	  url: "database/searchResultOneTrans.php",
+	  url: "request/searchResultOneTrans.php",
 	  async: false,
 	  data: {Cid: cid}
 	})
@@ -295,43 +339,33 @@ myapp.controller('ControllerAccountMenu', function($scope) {
 	$scope.userinfo.permission ='none';
 	
 	$scope.clicksumary= function(){
-		console.log("here1");
 		show_Page(7);
 	}
 
 	$scope.clickCourseDetails= function(){
-		console.log("here2");
-		var $scope2 = angular.element($("#userMainBuy")).scope();
-		//$scope2.$apply($scope2.getResultList());
-		$scope2.getResultList(); 
 		show_Page(10);
 	}
 	
 	$scope.clickCourseManagment= function(){
-		console.log("here3");
-
 		show_Page(11);
 	}	
 
 	$scope.clickAccountDetails= function(){
-		console.log("here4");
 		show_Page(12);
 	}	
 	
 	$scope.clickMessages= function(){
-		console.log("here5");
 		show_Page(13);
 	}
 
 	$scope.clickMnanageUsers = function(){
-		console.log("here6");
 		show_Page(20);
 	}
 });
 
 myapp.controller('ControllerAccountSummary', function($scope) {
 	$scope.userinfo = new Array();
-	//$scope.userinfo.permission = mydesignerdrug.userinfo.permission;
+	$scope.userinfo.permission = mydesignerdrug.userinfo.permission;
 
 	
 	$scope.refreshContent= function(){
@@ -342,20 +376,6 @@ myapp.controller('ControllerAccountSummary', function($scope) {
 });
 
 myapp.controller('ControllerCourseDetail', function($scope) {
-	$scope.uCompund = new Array();
-	
-	$scope.getResultList= function(){
-	$.ajax({
-	  type: "POST",
-	  url: "database/searchResultList.php",
-	  async: false,
-	  data: {}
-	})
-	  .done(function( msg ) {
-			$scope.uCompund = msg;
-		});
-	}
-
 });
 
 myapp.controller('ControllerAccountMsg', function($scope) {

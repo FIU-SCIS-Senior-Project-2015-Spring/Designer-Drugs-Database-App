@@ -1,0 +1,18 @@
+<!-- account Details -->
+	<div class="col-lg-9" id="userMainDtail" ng-controller="ControllerAccountDetail">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3>Account Details</h3>
+			</div>
+			<div class="panel-body">
+				<div class="list-group">
+					<a href="#" class="list-group-item"  ng-Click="callModalChangeOneAttribute('Change first name','Enter a new first name', 'FirstName', '')"><span class="badge">modify</span>First Name: {{accountDtl.FirstName}}</a>
+					<a href="#" class="list-group-item"  ng-Click="callModalChangeOneAttribute('Change middle name','Enter a new middle name', 'MiddleName', '')"><span class="badge">modify</span>Middle Name: {{accountDtl.MiddleName}}</a>
+					<a href="#" class="list-group-item"  ng-Click="callModalChangeOneAttribute('Change last name','Enter a new last name', 'LastName', '')"><span class="badge">modify</span>Last Name: {{accountDtl.LastName}}</a>
+					<div class="list-group-item">Email: {{accountDtl.Email}}</div>
+					<a href="#" class="list-group-item"  ng-Click="callModalChangeOneAttribute('Change address','Enter a new address', 'Address', '')"><span class="badge">modify</span>Address: {{accountDtl.Address}}</a>
+					<a href="javascript: $('#mchangePassword').modal('show');" class="list-group-item" ><span class="badge">modify</span>Password: *********************</a>
+				</div>
+			</div>
+		</div>
+	</div>

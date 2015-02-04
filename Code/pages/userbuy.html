@@ -1,0 +1,37 @@
+<!-- buy -->
+	<div class="col-lg-9 hidden"  id="userMainBuy" ng-controller="ControllerCourseDetail">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3>Books Rented</h3>
+			</div>
+			<div class="panel-body">
+				<table class="table">
+					<tr>
+						<td>Book Name</td>
+						<td>ISBN</td>
+						<td>Weeks Rented</td>
+						<td>Total Price</td>
+						<td></td>
+					</tr>
+					<tr ng-repeat="items in accntbought">
+						<!--<td><a href="javascript: angular.element($('#searchResult')).scope().accnt_one_item(2);">{{items.itemName}}</a></td>-->
+						<td>{{items.bookName}}</td>
+						<td>{{items.ISBN}}</td>
+						<td>{{items.weeksRented}}</td>
+						<td>{{items.TotalPrice}}</td>
+						<td>
+							<!-- Small button group -->
+							<div class="btn-group">
+							  <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+								Actions <span class="caret"></span>
+							  </button>
+							  <ul class="dropdown-menu" role="menu">
+								<li><a href="#" ng-click="callModalSendMessage(email, 'admin', 'Item No:'+items.transactionId);">Email Us</a></li>
+							  </ul>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>

@@ -1,0 +1,23 @@
+<!-- userMenu -->
+	<div class="col-lg-3" ng-controller="ControllerAccountMenu" id="accntMenu">
+		<div class="list-group">
+			<a  href="#sumary" ng-click="clicksumary()" class="list-group-item">
+				<h4 class="list-group-item-heading" ng-show="userinfo.permission =='admin'">Managment Summary</h4>
+				<p class="list-group-item-text" ng-show="userinfo.permission =='admin'">See summary of the system.</p>
+				<h4 class="list-group-item-heading" ng-show="userinfo.permission =='labOP'">Chem. Comp. Summary</h4>
+				<p class="list-group-item-text" ng-show="userinfo.permission =='labOP'">See Compound Summary summary.</p>
+			</a>
+			<a href="#CompManag" ng-click="clickCourseDetails()"  class="list-group-item">
+				<h4 class="list-group-item-heading">Compound Managment</h4>
+				<p class="list-group-item-text" ng-show="userinfo.permission =='admin'">Details of compound Managment</p>
+			</a>
+			<a  href="#AccountDetails" ng-click="clickAccountDetails()" class="list-group-item">
+				<h4 class="list-group-item-heading">Account Details</h4>
+				<p class="list-group-item-text">Account Login info, user email, address, etc.</p>
+			</a>
+			<a href="#ManageUsers" ng-Click="clickMnanageUsers()" class="list-group-item" ng-show="userinfo.permission =='admin'">
+				<h4 class="list-group-item-heading">Manage Users</h4>
+				<p class="list-group-item-text">Delete and Upgrade/downgrade Users from/to admin.</p>
+			</a>
+		</div>
+	</div>
