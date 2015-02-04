@@ -62,6 +62,26 @@
 					</div>
 				</div>
 			</div>
+			<div class="row">
+				<div class="col-md-6 col-md-offset-3">
+					
+					<ul class="list-group">
+					  <li class="list-group-item list-group-item-info"> Compound classes</li>
+					  <li class="list-group-item">
+					  <button type="button" class="btn btn-default badge"><span class="glyphicon glyphicon-download-alt"></span></button>
+						Cras justo odio
+					  </li>
+					  <li class="list-group-item">
+					  <button type="button" class="btn btn-default badge"><span class="glyphicon glyphicon-download-alt"></span></button>
+						Cras justo JZHxvZodio
+					  </li>
+					  <li class="list-group-item">
+					  <button type="button" class="btn btn-default badge"><span class="glyphicon glyphicon-download-alt"></span></button>
+						Cras askhcsjusto odio
+					  </li>
+					</ul>
+				</div>
+			</div>
 		</div>
 	</div>
 
