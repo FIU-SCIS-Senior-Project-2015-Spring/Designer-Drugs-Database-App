@@ -1,107 +1,7 @@
-var sys = {q:[], r:[]};
+var sys = {q:[], r:[], ctrl:null};
 
-/*
-function show_Page(index) {
-	$("#main").hide().removeClass('hide');
-	$("#login").hide().removeClass('hidden');
-	$("#newUser").hide().removeClass('hidden');
-	$("#contactUs").hide().removeClass('hidden');
-	$("#aboutUs").hide().removeClass('hidden');
-	$("#example").hide().removeClass('hidden');
-	$("#findMore").hide().removeClass('hidden');
-	$("#userMain").hide().removeClass('hidden');
-	$("#userMainSum").hide().removeClass('hidden');
-	$("#userMainBuy").hide().removeClass('hidden');
-	$("#userMainSell").hide().removeClass('hidden');
-	$("#userMainMsg").hide().removeClass('hidden');
-	$("#userMainDtail").hide().removeClass('hidden');
-	$("#userOneMsg").hide().removeClass('hidden');
-	$("#searchResult").hide().removeClass('hidden');
-	$("#itemSale").hide().removeClass('hidden');
-	$("#newItemSale").hide().removeClass('hidden');
-	$("#shoppingCart").hide().removeClass('hidden');
-	$("#checkout").hide().removeClass('hidden');
-	$("#userMng").hide().removeClass('hidden');
-	$("#userOneMng").hide().removeClass('hidden');
-	$("#productSrch").hide().removeClass('hidden');
-	$("#oneResult").hide().removeClass('hidden');
-	
-	
-	
-	switch(index){
-		case 0: $("#main").show();
-				break;
-		case 1: $("#login").show();
-				break;
-		case 2: $("#newUser").show();
-				break;
-		case 3: $("#contactUs").show();
-				break;
-		case 4: $("#aboutUs").show();
-				break;
-		case 5: $("#example").show();
-				break;
-		case 6: $("#findMore").show();
-				break;
-		case 7: $("#userMain").show();
-				$("#barLoginMenu").hide().removeClass('hidden');
-				$("#barLogoutMenu").removeClass('hidden');
-				$("#barAccountMenu").removeClass('hidden');
-				$("#barShoppingMenu").removeClass('hidden');
-				$("#barLogoutMenu").show();
-				$("#barAccountMenu").show();
-				$("#barShoppingMenu").show();
-				$("#userMainSum").show();
-				break;
-		case 8: $("#main").show();
-				$("#barLoginMenu").show().removeClass('hidden');
-				$("#barLogoutMenu").hide().removeClass('hidden');
-				$("#barAccountMenu").hide().removeClass('hidden');
-				$("#barShoppingMenu").hide().removeClass('hidden');
-				break;
-		case 9: $("#userMain").show();
-				$("#userMainSum").show();
-				break;
-		case 10:$("#userMain").show();
-				$("#userMainBuy").show();
-				break;
-		case 11:$("#userMain").show();
-				$("#userMainSell").show();
-				break;
-		case 12:$("#userMain").show();
-				$("#userMainDtail").show();
-				break;
-		case 13:$("#userMain").show();
-				$("#userMainMsg").show();
-				break;
-		case 14:$("#userMain").show();
-				$("#userOneMsg").show();
-				break;
-		case 15:$("#itemSale").show();
-				break;
-		case 16:$("#searchResult").show();
-				break;		
-		case 17:$("#newItemSale").show();
-				break;		
-		case 18:$("#shoppingCart").show();
-				break;
-		case 19:$("#checkout").show();
-				break;
-		case 20:$("#userMain").show();
-				$("#userMng").show();
-				break;
-		case 21:$("#userMain").show();
-				$("#userOneMng").show();
-				break;
-		case 22:$("#userMain").show();
-				$("#productSrch").show();
-				break;		
-		case 23:$("#oneResult").show();
-				break;		
 
-	}
-}
-*/
+
 ////////////////////////////ANGULAR JS///////////////////////////////
 var myapp = angular.module('mainApp', ['angularFileUpload','ngRoute']);
 
@@ -125,7 +25,8 @@ myapp.controller('ControllerNavbar', function($scope) {
             .when('/:page', {
                 //templateUrl : 'pages/about.html',
 				templateUrl : function(route){
-				console.log(route);
+				sys.q = [];
+				//console.log(route);
 				return "pages/"+route.page+".html";
 				},
                 controller  : 'MyController'
@@ -173,7 +74,8 @@ myapp.controller('MyController', function($scope, $http) {
             });
         });
     }
-	
+	if(angular.isFunction(sys.ctrl)) sys.ctrl($scope,$http);
+	sys.ctrl = null;
 });
 	
 myapp.controller('ControllerMain', function($scope) {
