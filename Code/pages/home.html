@@ -4,7 +4,7 @@
 			<div class="form-group">
 				<div class="input-group">
 					<input class="form-control" type="text" placeholder="input criteria"/>
-					<a href="#itemList" class="input-group-addon btn btn-primary" >Search Now!</a>
+					<a href="#home" ng-click="showList()" class="input-group-addon btn btn-primary" >Search Now!</a>
 				</div>
 			</div>
 		</div>
@@ -15,17 +15,9 @@
 			  <div class="panel-heading">Compound classes</div>
 			  <div class="panel-body">
 				<ul class="list-group">
-				  <a href="#" class="list-group-item">
+				  <a href="#home" class="list-group-item" ng-repeat="items in r[0]">
 				  <button type="button" class="btn btn-default badge"><span class="glyphicon glyphicon-download-alt"></span></button>
-					Cras justo odio
-				  </a>
-				  <a href="#" class="list-group-item">
-				  <button type="button" class="btn btn-default badge"><span class="glyphicon glyphicon-download-alt"></span></button>
-					Cras justo JZHxvZodio
-				  </a>
-				  <a href="#" class="list-group-item">
-				  <button type="button" class="btn btn-default badge"><span class="glyphicon glyphicon-download-alt"></span></button>
-					Cras askhcsjusto odio
+					{{items["class"]}}
 				  </a>
 				</ul>
 			</div>
@@ -33,3 +25,52 @@
 		</div>
 	</div>
 </div>
+
+
+<!--item list-->
+<div class="modal fade" id="resultList">
+  <div class="modal-dialog">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		<h4 class="modal-title">Select the proper element,</h4>
+	  </div>
+	  <div class="modal-body">
+		<div class="list-group">
+		  <a ng-href ng-Click="selectOne(items.cid)" class="list-group-item" ng-repeat="items in resultL">{{items.cFormula}} : {{items.cName}}</a>
+		</div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+	  </div>
+	</div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+	
+<!--contoller-->
+<script>
+sys.q = [
+	{url:"request/classList.php"}
+];
+
+sys.ctrl = function($scope, $http) {
+	$scope.resultL = [];
+
+	$scope.showList = function() {		
+		$http.get("request/searchResultList.php").success(function(json) {
+		$scope.resultL = json;
+		$('#resultList').modal('show');	
+		});
+		
+	};
+	
+	$scope.selectOne= function(number){
+		//console.log(number);
+		$('#resultList').modal('hide');
+		 //$modalInstance.close($scope.selected.item);
+		//sleep(5);
+		$scope.go('/item');
+	}
+}
+</script>

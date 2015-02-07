@@ -20,23 +20,23 @@ myapp.controller('ControllerNavbar', function($scope) {
 
 });                                    
 	
-    myapp.config(['$routeProvider',function($routeProvider) {
-        $routeProvider
-            .when('/:page', {
-                //templateUrl : 'pages/about.html',
-				templateUrl : function(route){
-				sys.q = [];
-				//console.log(route);
-				return "pages/"+route.page+".html";
-				},
-                controller  : 'MyController'
-            })
-			.otherwise({
-                redirectTo : '/home'
-            });
-    }]);
+myapp.config(['$routeProvider',function($routeProvider) {
+	$routeProvider
+		.when('/:page', {
+			//templateUrl : 'pages/about.html',
+			templateUrl : function(route){
+			sys.q = [];
+			//console.log(route);
+			return "pages/"+route.page+".html";
+			},
+			controller  : 'MyController'
+		})
+		.otherwise({
+			redirectTo : '/home'
+		});
+}]);
 
-myapp.controller('MyController', function($scope, $http) {
+myapp.controller('MyController', function($scope, $http, $location) {
 	
     $scope.r = [];
     var len_q = sys.q.length;
@@ -76,8 +76,15 @@ myapp.controller('MyController', function($scope, $http) {
     }
 	if(angular.isFunction(sys.ctrl)) sys.ctrl($scope,$http);
 	sys.ctrl = null;
-});
 	
+	$scope.go = function ( path ) {
+		console.log("dddd");
+		$location.path( path );
+	};
+});
+
+
+//old controllers	
 myapp.controller('ControllerMain', function($scope) {
 	$scope.searchItem= function(){
 		var $scope = angular.element($("#resultList")).scope();
