@@ -1,5 +1,9 @@
 <!-- manage Search Users -->
-	<div class="col-lg-9" id="userMng" ng-controller="ControllerManageUsers">
+<div>
+	<div class="col-lg-3">
+		<div ng-include="'pages/userMenu.html'"></div>
+	</div>
+	<div class="col-lg-9" id="userMng">
 		<div class="panel panel-default">
 				<div class="panel-heading">
 					<h3>Search for a user</h3> 
@@ -13,3 +17,10 @@
 				</div>
 		</div>
 	</div>
+</div>
+
+<script>
+sys.ctrl = function($scope, $http) {
+	//if(sys.user == null) $scope.go("/home");
+}
+</script>

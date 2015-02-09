@@ -1,5 +1,9 @@
 <!-- User Msg -->
-	<div class="col-lg-9"  id="userMainMsg"  ng-controller="ControllerAccountMsg">
+<div>
+	<div class="col-lg-3">
+		<div ng-include="'pages/userMenu.html'"></div>
+	</div>
+	<div class="col-lg-9"  id="userMainMsg">
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3>Account Messages</h3>
@@ -14,3 +18,10 @@
 			</div>
 		</div>
 	</div>
+</div>
+
+<script>
+sys.ctrl = function($scope, $http) {
+	//if(sys.user == null) $scope.go("/home");
+}
+</script>

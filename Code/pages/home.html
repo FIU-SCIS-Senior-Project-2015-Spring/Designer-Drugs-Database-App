@@ -28,7 +28,7 @@
 
 
 <!--item list-->
-<div class="modal fade" id="resultList">
+<div class="modal" id="resultList">
   <div class="modal-dialog">
 	<div class="modal-content">
 	  <div class="modal-header">
@@ -59,8 +59,8 @@ sys.ctrl = function($scope, $http) {
 
 	$scope.showList = function() {		
 		$http.get("request/searchResultList.php").success(function(json) {
-		$scope.resultL = json;
-		$('#resultList').modal('show');	
+			$scope.resultL = json;
+			$('#resultList').modal('show');	
 		});
 		
 	};
@@ -69,7 +69,6 @@ sys.ctrl = function($scope, $http) {
 		//console.log(number);
 		$('#resultList').modal('hide');
 		 //$modalInstance.close($scope.selected.item);
-		//sleep(5);
 		$scope.go('/item');
 	}
 }

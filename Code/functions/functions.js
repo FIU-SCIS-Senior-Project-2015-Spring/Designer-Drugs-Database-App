@@ -1,12 +1,22 @@
-var sys = {q:[], r:[], ctrl:null};
+var sys = {q:[], r:[], ctrl:null,user:null,navbarScope:null};
 
 
 
 ////////////////////////////ANGULAR JS///////////////////////////////
 var myapp = angular.module('mainApp', ['angularFileUpload','ngRoute']);
 
-myapp.controller('ControllerNavbar', function($scope) {
 
+/* this is the controller of the navbar.
+* the navbar scope is on the global variable to be able to modify the 
+* userinfo variable and automatically reflect changes on the navBar
+*(changes like hiding and showing buttons). in this case when the variable
+* userinfo is changed through sys.navbarScope then the digest refreshes the 
+* page automatically because there has been a change to the scope.
+*/
+myapp.controller('ControllerNavbar', function($scope, $location) {
+	$scope.userinfo = sys.user;
+	sys.navbarScope = $scope;
+	
 	$scope.clickLogout= function(){
 	$.ajax({
 		type: "POST",
@@ -14,10 +24,11 @@ myapp.controller('ControllerNavbar', function($scope) {
 		data: {}
 		})
 		.done(function( msg ) {
-			show_Page(8);
+			sys.user = null;
+			$scope.userinfo = sys.user;
+			$location.path("/home");
 		});
 	}
-
 });                                    
 	
 myapp.config(['$routeProvider',function($routeProvider) {
@@ -37,7 +48,7 @@ myapp.config(['$routeProvider',function($routeProvider) {
 }]);
 
 myapp.controller('MyController', function($scope, $http, $location) {
-	
+	$scope.userinfo = sys.user;
     $scope.r = [];
     var len_q = sys.q.length;
     for (var i = 0; i < len_q; i++) {
@@ -78,7 +89,6 @@ myapp.controller('MyController', function($scope, $http, $location) {
 	sys.ctrl = null;
 	
 	$scope.go = function ( path ) {
-		console.log("dddd");
 		$location.path( path );
 	};
 });
@@ -93,6 +103,7 @@ myapp.controller('ControllerMain', function($scope) {
 	}
 });	
 
+/*
 myapp.controller('ControllerLogin', function($scope) {
 	$scope.userinfo = new Array();
     $scope.email="";
@@ -136,7 +147,7 @@ myapp.controller('ControllerLogin', function($scope) {
 		return $scope.userinfo;
 	}
 });
-
+*/
 myapp.controller('ControllerAboutUs', function($scope) {
 	console.log("it is in the controller");
 });
@@ -240,7 +251,7 @@ myapp.controller('ControllerNewUser', function($scope) {
 	}
 
 });
-*/
+
 
 myapp.controller('ControllerAccountMenu', function($scope) {
 	//TODO this need to change and come from the login result
@@ -295,9 +306,7 @@ myapp.controller('ControllerAccountDetail', function($scope) {
 
 myapp.controller('ControllerManageUsers', function($scope) {
 });
-
-
-
+*/
 
 
 

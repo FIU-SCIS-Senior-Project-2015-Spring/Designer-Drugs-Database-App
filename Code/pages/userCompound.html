@@ -1,5 +1,9 @@
 <!-- buy -->
-	<div class="col-lg-9 hidden"  id="userMainBuy" ng-controller="ControllerCourseDetail">
+<div>
+	<div class="col-lg-3">
+		<div ng-include="'pages/userMenu.html'"></div>
+	</div>
+	<div class="col-lg-9"  id="userMainBuy">
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3>Books Rented</h3>
@@ -35,3 +39,10 @@
 			</div>
 		</div>
 	</div>
+</div>
+
+<script>
+sys.ctrl = function($scope, $http) {
+	//if(sys.user == null) $scope.go("/home");
+}
+</script>	

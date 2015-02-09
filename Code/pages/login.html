@@ -1,5 +1,5 @@
 <!-- Login Good -->
-	<div class="container col-md-4 col-md-offset-4" id="login" ng-controller="ControllerLogin" type="text/ng-template" id="login.html">
+	<div class="container col-md-4 col-md-offset-4">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
 				<h3 class="panel-title">Login</h3>
@@ -12,8 +12,40 @@
 				  <div class="form-group">
 					<input type="password" class="form-control" placeholder="Password" ng-model="password">
 				  </div>
-				  <a  href="#" ng-click="clickLogin()" class="btn btn-info btn-block">Submit!</a>
+				  <button  ng-click="clickLogin()" class="btn btn-info btn-block">Submit!</button>
 				</form>	
 			</div>
 		</div>	
 	</div>
+	
+<script>
+sys.ctrl = function($scope, $http) {
+	$scope.email="";
+	$scope.password="";
+	
+	
+	$scope.clickLogin= function(number){
+		console.log("sdfsdfs");
+		$http.post("request/accntLogin.php",{email:$scope.email, password: $scope.password})
+		.success(function(json) {
+		if((json == null) || (!(typeof json==='object'))){
+			//$('#titleWSignUPInfo').text("Login Un-SuccessFul");		
+			//$('#tWSignUPInfo').text(msg);
+			//$('#mWSignUPInfo').modal('show');
+			console.log("wrong pass");
+			$scope.password="";
+		}else{
+			$scope.email="";
+			$scope.password="";
+			//$scope.userinfo = json; 
+			sys.user= json;
+			sys.navbarScope.userinfo = sys.user;
+			//var $scope2 = angular.element($("#MainNavBar")).scope();
+			//$scope2.$apply($scope2.refreshContent());
+
+			$scope.go('/userMain');
+		}
+		});		
+	}
+}
+</script>

@@ -1,5 +1,6 @@
 <?php
 	session_start();
+	$_REQUEST = json_decode(file_get_contents('php://input'),true);
 	$email = $_REQUEST["email"];
 	$pass = $_REQUEST["password"];
 
