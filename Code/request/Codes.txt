@@ -1,0 +1,6 @@
+List of Codes
+-------------
+Code: page : meaning
+1000: accntLogin.php: Correct Login and PAssword.
+1001: accntLogin.php: Incorrect Login or PAssword.
+1002: accntLogin.php: Another Error Ocurred, see details in CodeDetails(display in console).
