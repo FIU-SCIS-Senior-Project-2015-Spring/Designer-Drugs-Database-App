@@ -20,7 +20,7 @@ myapp.controller('ControllerNavbar', function($scope, $location) {
 	$scope.clickLogout= function(){
 	$.ajax({
 		type: "POST",
-		url: "request/accntLogout.php",
+		url: "request/accntLogOut.php",
 		data: {}
 		})
 		.done(function( msg ) {
