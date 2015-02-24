@@ -1,0 +1,54 @@
+<!-- account Details -->
+<div class="col-lg-offset-1">
+	<div class="col-lg-3">
+		<div ng-include="'pages/userMenu.html'"></div>
+	</div>
+	<div class="col-lg-7" id="userMainDtail">
+		<div class="panel panel-primary">
+			<div class="panel-heading">Modify Compound</div>
+			<div class="panel-body">
+				<div class="list-group">
+					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute()"><span class="badge" ng-Click="callModalChangeOneAttribute()">modify</span>Name: {{passVariable.cName}}</a>
+					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute()"><span class="badge" ng-Click="callModalChangeOneAttribute()">modify</span>Formula: {{passVariable.cFormula}}</a>
+					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute()"><span class="badge" ng-Click="callModalChangeOneAttribute()">modify</span>Other Name: {{passVariable.cOName}}</a>
+					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute()"><span class="badge" ng-Click="callModalChangeOneAttribute()">modify</span>Mass: {{passVariable.cMass}}</a>
+					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute()"><span class="badge" ng-Click="callModalChangeOneAttribute()">modify</span>Precursor: {{passVariable.cPrecursor}}</a>
+					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute()"><span class="badge" ng-Click="callModalChangeOneAttribute()">modify</span>Frag: {{passVariable.cFrag}}</a>
+					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute()"><span class="badge" ng-Click="callModalChangeOneAttribute()">modify</span>RT: {{passVariable.cRT}}</a>
+					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute()"><span class="badge" ng-Click="callModalChangeOneAttribute()">modify</span>CAS: {{passVariable.cCAS}}</a>
+					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute()"><span class="badge" ng-Click="callModalChangeOneAttribute()">modify</span>Class: {{passVariable.cClass}}</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script>
+sys.ctrl = function($scope, $http) {
+	//if(sys.user == null) $scope.go("/home");
+	$scope.passVariable = sys.passVariable;
+	console.log(sys.passVariable);
+	console.log($scope.passVariable);
+	$scope.callModalChangeOneAttribute= function(){
+		//do an AJAX request to find whether user exist
+		//the answer depends on the Code field. See file Codes.txt to know what each code means
+		$http.post("request/compModuleCall.php",{section:"getComp", searchCriteria: $scope.SearchCriteria})
+		.success(function(json) {
+			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+			else if(json["Code"] == 2000){
+				$scope.SearchCriteria = "";
+				$scope.passVariable = json["data"];
+				$scope.go("/userModCompund");
+			}else {	//According to Code 1001 login was unsuccessful
+				$('#mMessgTitle').text("Acction cannot be processed.");		
+	 			$('#mMessgText').text(json["CodeDetails"]);
+				$('#mMessg').modal('show');
+				$scope.emailModify="";
+			}
+		});		
+	}
+	
+	
+}
+</script>	
