@@ -1,6 +1,7 @@
 <?php
-$dbAddress = "localhost";
-$dbName = "drugsdb";
-$dbUser = "root";
-$dbPassword = "";
+$dbConfig = array();
+$dbConfig["Address"] = "localhost";
+$dbConfig["Name"] = "drugsdb";
+$dbConfig["User"] = "root";
+$dbConfig["Password"] = "";
 ?>

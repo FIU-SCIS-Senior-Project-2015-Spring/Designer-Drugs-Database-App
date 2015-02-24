@@ -3,4 +3,16 @@ List of Codes
 Code: page : meaning
 1000: accntLogin.php: Correct Login and PAssword.
 1001: accntLogin.php: Incorrect Login or PAssword.
-1002: accntLogin.php: Another Error Ocurred, see details in CodeDetails(display in console).
+1002: accntLogin.php: Another Error Ocurred, see details in CodeDetails(display in console). Exception thrown!
+
+1003: accntUserRight.php: Sesion is not correct or not in place(missing email), user may not be logged in.
+1004: accntUserRight.php: Sesion is not correct or not in place(missing userID), user may not be logged in.
+1005: accntUserRight.php: User was found.
+1006: accntUserRight.php: User was not found.
+1007: accntUserRight.php: Another Error Ocurred, see details in CodeDetails(display in console). Exception thrown!
+
+1008: accntUserSearch.php: user is not an admin and has permision to continue on this page.
+1009: accntUserSearch.php: userEmail has not been received in this page
+1010: accntUserSearch.php: searched user found
+1011: accntUserSearch.php: searched user not found
+1012: accntUserSearch.php: Another Error Ocurred, see details in CodeDetails(display in console). Exception thrown!

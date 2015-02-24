@@ -23,14 +23,14 @@ sys.ctrl = function($scope, $http) {
 	$scope.email="";
 	$scope.password="";
 	
-	$scope.clickLogin= function(number){
+	$scope.clickLogin= function(){
 		//do an AJAX request to analize whether username and password are correct
 		//the answer depends on the Code field. See file Codes.txt to know what each code means
-		$http.post("request/accntLogin.php",{email:$scope.email, password: $scope.password})
+		$http.post("request/authModuleCall.php",{email:$scope.email, password: $scope.password, section:"testLoginInfo"})
 		.success(function(json) {
-			if(json["Code"] == 1000){//According to Code 1000, login is good
+			if(json["Code"] == 2000){//According to Code 1000, login is good
 				//Add data to the proper variables
-				sys.user= json;
+				sys.user= json["loggedIn"];
 				sys.navbarScope.userinfo = sys.user;
 
 				//clear the fields of models for email and password
@@ -39,16 +39,10 @@ sys.ctrl = function($scope, $http) {
 				
 				//redirect to userMain
 				$scope.go('/userMain');
-			}else if(json["Code"] == 1001){	//According to Code 1001 login was unsuccessful
+			}else {
 				$('#mMessgTitle').text("Login Un-SuccessFul");		
-	 			$('#mMessgText').text("Wrong Email or Password");
+	 			$('#mMessgText').text(json["CodeDetails"]);
 				$('#mMessg').modal('show');
-				$scope.password="";
-			}else {//Code 1002: another error occurred, see details in console.
-				$('#mMessgTitle').text("Login Un-SuccessFul");		
-	 			$('#mMessgText').text("An Unexpected Error has occurred. Contact Administrator");
-				$('#mMessg').modal('show');
-				Console.log(json["CodeDetails"]);
 				$scope.password="";
 			}
 		});		

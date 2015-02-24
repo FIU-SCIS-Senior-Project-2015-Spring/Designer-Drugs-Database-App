@@ -1,13 +1,11 @@
 <!-- User Msg -->
-<div>
+<div class="col-lg-offset-1">
 	<div class="col-lg-3">
 		<div ng-include="'pages/userMenu.html'"></div>
 	</div>
-	<div class="col-lg-9"  id="userMainMsg">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h3>Account Messages</h3>
-			</div>
+	<div class="col-lg-7"  id="userMainMsg">
+		<div class="panel panel-primary">
+			<div class="panel-heading">Account Messages	</div>
 			<div class="panel-body">
 				<div class="list-group">
 				  <a href="#" ng-Click="accnt_One_msg(items.emailNo)" class="list-group-item" ng-repeat="items in msgs">

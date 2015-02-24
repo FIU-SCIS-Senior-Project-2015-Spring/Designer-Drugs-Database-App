@@ -1,26 +1,180 @@
 <!-- manage Search Users -->
-<div>
+<div class="col-lg-offset-1">
 	<div class="col-lg-3">
 		<div ng-include="'pages/userMenu.html'"></div>
 	</div>
-	<div class="col-lg-9" id="userMng">
-		<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3>Search for a user</h3> 
+	<div class="col-lg-7">
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="panel panel-primary">
+						<div class="panel-heading">	Modify/Delete user </div>
+						<div class="panel-body">
+							<div class="form-group">
+								<input type="text" class="form-control" ng-model="emailModify" placeholder="Email">
+							</div>
+							<hr/>
+							<a ng-href class="btn btn-primary btn-block" ng-click="clickSearch()">Search</a>
+						</div>
 				</div>
-				<div class="panel-body">
-					<div class="form-group">
-						<input type="text" class="form-control" id="AccntUEmail" placeholder="Email">
-					</div>
-					<hr/>
-					<a href="javascript: searchOneUser($('#AccntUEmail').val())" class="btn btn-primary btn-block">Search</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="panel panel-primary">
+						<div class="panel-heading">	Add New User </div>
+						<div class="panel-body">
+							<div class="form-group">
+								<input type="text" class="form-control" ng-model="emailAdd" placeholder="Email">
+							</div>
+							<hr/>
+							<a ng-href class="btn btn-primary btn-block" ng-click="emailAddNew()">Invite</a>
+						</div>
 				</div>
+			</div>
 		</div>
 	</div>
 </div>
 
+<!--modify User-->
+<div class="modal" id="mmodUser">
+  <div class="modal-dialog">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		<h4 class="modal-title">Modify User Status,</h4>
+	  </div>
+	  <div class="modal-body">
+		<div id="muserName"></div>
+		<div id="muserEmail"></div>
+		<div id="muserStatus"></div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-default" ng-show="userPermission=='labOP'" ng-click="upGrade()">Upgrade</button>
+		<button type="button" class="btn btn-default" ng-show="userPermission=='admin'" ng-click="downGrade()">Downgrade</button>
+		<button type="button" class="btn btn-default" ng-click="delete()">Delete</button>
+		<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+	  </div>
+	</div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
 <script>
 sys.ctrl = function($scope, $http) {
-	//if(sys.user == null) $scope.go("/home");
+	//these variables are associated with the ng-model
+	//if you modify any of these variables it will be
+	//modified in the view as well
+	$scope.emailModify = "";
+	$scope.emailAdd = "";
+	$scope.userPermission;
+	$scope.searchedUser;
+
+	$scope.clickSearch= function(){
+		//do an AJAX request to find whether user exist
+		//the answer depends on the Code field. See file Codes.txt to know what each code means
+		$http.post("request/userModuleCall.php",{email:$scope.emailModify, section:"findUser"})
+		.success(function(json) {
+			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+			else if(json["Code"] == 2000){
+				$scope.emailModify="";
+				$('#muserName').text("Name: "+json["data"]["Name"]);
+				$('#muserEmail').text("Email: "+json["data"]["email"]);
+				$('#muserStatus').text("Status "+json["data"]["permission"]);
+				$scope.userPermission = json["data"]["permission"];
+				$scope.searchedUser = json["data"];
+				$('#mmodUser').modal('show');
+			}else {	//According to Code 1001 login was unsuccessful
+				$('#mMessgTitle').text("Acction cannot be processed.");		
+	 			$('#mMessgText').text(json["CodeDetails"]);
+				$('#mMessg').modal('show');
+				$scope.emailModify="";
+				//Console.log(json["Code"]);
+			}
+		});		
+	}
+
+	$scope.upGrade= function(){
+		$('#mmodUser').modal('hide');
+		//do an AJAX request to find whether user exist
+		//the answer depends on the Code field. See file Codes.txt to know what each code means
+		$http.post("request/userModuleCall.php",{email:$scope.searchedUser["email"], section:"upgradeUser"})
+		.success(function(json) {
+			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+			else if(json["Code"] == 2000){
+				$('#mMessgTitle').text("Upgrade Successful.");		
+	 			$('#mMessgText').text($scope.searchedUser["email"]+ " is now an Admin");
+				$('#mMessg').modal('show');
+			}else {	//According to Code 1001 login was unsuccessful
+				$('#mMessgTitle').text("Acction cannot be processed.");		
+	 			$('#mMessgText').text(json["CodeDetails"]);
+				$('#mMessg').modal('show');
+				$scope.emailModify="";
+				//Console.log(json["Code"]);
+			}
+		});		
+	}
+
+	$scope.downGrade= function(){
+		$('#mmodUser').modal('hide');
+		//do an AJAX request to find whether user exist
+		//the answer depends on the Code field. See file Codes.txt to know what each code means
+		$http.post("request/userModuleCall.php",{email:$scope.searchedUser["email"], section:"downgradeUser"})
+		.success(function(json) {
+			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+			else if(json["Code"] == 2000){
+				$('#mMessgTitle').text("Downgrade Successful.");		
+	 			$('#mMessgText').text($scope.searchedUser["email"]+ " is now an Lab Operator");
+				$('#mMessg').modal('show');
+			}else {	//According to Code 1001 login was unsuccessful
+				$('#mMessgTitle').text("Acction cannot be processed.");		
+	 			$('#mMessgText').text(json["CodeDetails"]);
+				$('#mMessg').modal('show');
+				$scope.emailModify="";
+				//Console.log(json["Code"]);
+			}
+		});		
+	}
+
+	$scope.delete= function(){
+		$('#mmodUser').modal('hide');
+		//do an AJAX request to find whether user exist
+		//the answer depends on the Code field. See file Codes.txt to know what each code means
+		$http.post("request/userModuleCall.php",{email:$scope.searchedUser["email"], section:"deleteUser"})
+		.success(function(json) {
+			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+			else if(json["Code"] == 2000){
+				$('#mMessgTitle').text("Delete Successful.");		
+	 			$('#mMessgText').text($scope.searchedUser["email"]+ " is now deleted.");
+				$('#mMessg').modal('show');
+			}else {	//According to Code 1001 login was unsuccessful
+				$('#mMessgTitle').text("Acction cannot be processed.");		
+	 			$('#mMessgText').text(json["CodeDetails"]);
+				$('#mMessg').modal('show');
+				$scope.emailModify="";
+				//Console.log(json["Code"]);
+			}
+		});		
+	}
+	
+	$scope.emailAddNew= function(){
+		//do an AJAX request to find whether user exist
+		//the answer depends on the Code field. See file Codes.txt to know what each code means
+		$http.post("request/userModuleCall.php",{email:$scope.emailAdd, section:"addUser"})
+		.success(function(json) {
+			if(json["Code"] > 2000 && json["Code"] < 3000) $scope.go("/home");
+			else if(json["Code"] == 2000){
+				$scope.emailAdd="";
+				$('#mMessgTitle').text("Addition successful.");		
+	 			$('#mMessgText').text("Invitation has been sent");
+				$('#mMessg').modal('show');
+			}else {	//According to Code 1001 login was unsuccessful
+				$('#mMessgTitle').text("Acction cannot be processed.");		
+	 			$('#mMessgText').text(json["CodeDetails"]);
+				$('#mMessg').modal('show');
+				$scope.emailAdd="";
+				//Console.log(json["Code"]);
+			}
+		});		
+	}
 }
 </script>

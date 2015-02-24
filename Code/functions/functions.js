@@ -1,4 +1,4 @@
-var sys = {q:[], r:[], ctrl:null,user:null,navbarScope:null};
+var sys = {q:[], r:[], ctrl:null,user:null,navbarScope:null,passVariable:null};
 
 
 
@@ -20,24 +20,30 @@ myapp.controller('ControllerNavbar', function($scope, $location) {
 	$scope.clickLogout= function(){
 	$.ajax({
 		type: "POST",
-		url: "request/accntLogOut.php",
-		data: {}
+		url: "request/authModuleClass.php",
+		data: {section: "logOut"}
 		})
 		.done(function( msg ) {
 			sys.user = null;
 			$scope.userinfo = sys.user;
 			$location.path("/home");
 		});
-	}
+		
+/*		
+		$http.post("request/authModuleClass.php",{section: "logOut"})
+		.success(function(json) {
+			sys.user = null;
+			$scope.userinfo = sys.user;
+			$location.path("/home");
+		});		
+*/	}
 });                                    
 	
 myapp.config(['$routeProvider',function($routeProvider) {
 	$routeProvider
 		.when('/:page', {
-			//templateUrl : 'pages/about.html',
 			templateUrl : function(route){
 			sys.q = [];
-			//console.log(route);
 			return "pages/"+route.page+".html";
 			},
 			controller  : 'MyController'

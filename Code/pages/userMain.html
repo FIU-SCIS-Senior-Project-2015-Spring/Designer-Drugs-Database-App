@@ -1,13 +1,11 @@
 <!-- userMain -->
-<div>
+<div class="col-lg-offset-1">
 	<div class="col-lg-3">
 		<div ng-include="'pages/userMenu.html'"></div>
 	</div>
-	<div class="col-lg-9"  id="userMainSum">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h3>Account Summary</h3>
-			</div>
+	<div class="col-lg-7"  id="userMainSum">
+		<div class="panel panel-primary">
+			<div class="panel-heading">Account Summary</div>
 			<div class="panel-body">
 				<ul class="nav nav-pills nav-stacked">
 				  <li class="list-group-item list-group-item-success">Drugs Uploaded<span class="badge pull-right">{{r[0]["totalDrugs"]}}</span></li>

@@ -1,29 +1,130 @@
 <!-- account Details -->
-<div>
+<div class="col-lg-offset-1">
 	<div class="col-lg-3">
 		<div ng-include="'pages/userMenu.html'"></div>
 	</div>
-	<div class="col-lg-9" id="userMainDtail">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h3>Account Details</h3>
-			</div>
+	<div class="col-lg-7" id="userMainDtail">
+		<div class="panel panel-primary">
+			<div class="panel-heading">Account Details</div>
 			<div class="panel-body">
 				<div class="list-group">
-					<a href="#" class="list-group-item"  ng-Click="callModalChangeOneAttribute('Change first name','Enter a new first name', 'FirstName', '')"><span class="badge">modify</span>First Name: {{accountDtl.FirstName}}</a>
-					<a href="#" class="list-group-item"  ng-Click="callModalChangeOneAttribute('Change middle name','Enter a new middle name', 'MiddleName', '')"><span class="badge">modify</span>Middle Name: {{accountDtl.MiddleName}}</a>
-					<a href="#" class="list-group-item"  ng-Click="callModalChangeOneAttribute('Change last name','Enter a new last name', 'LastName', '')"><span class="badge">modify</span>Last Name: {{accountDtl.LastName}}</a>
-					<div class="list-group-item">Email: {{accountDtl.Email}}</div>
-					<a href="#" class="list-group-item"  ng-Click="callModalChangeOneAttribute('Change address','Enter a new address', 'Address', '')"><span class="badge">modify</span>Address: {{accountDtl.Address}}</a>
-					<a href="javascript: $('#mchangePassword').modal('show');" class="list-group-item" ><span class="badge">modify</span>Password: *********************</a>
+					<div class="list-group-item">Email: {{userinfo.email}}</div>
+					<a ng-href class="list-group-item"  ng-Click="callModalChangeName()"><span class="badge" ng-Click="callModalChangeName()">modify</span>Name: {{userinfo.Name}}</a>
+					<a ng-href class="list-group-item"  ng-Click="callModalChangePass()"><span class="badge" ng-Click="callModalChangePass()">modify</span>Password: *********************</a>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
 
+<div class="modal fade" id="mchangeName">
+  <div class="modal-dialog">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		<h4 class="modal-title">Change Name</h4>
+	  </div>
+	  <div class="modal-body">
+		  <div class="form-group">
+			<input type="text" class="form-control" ng-model="newName">
+		  </div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-default" ng-click="clickChangeName()">Submit</button>
+		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	  </div>
+	</div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->		
+
+<div class="modal fade" id="mchangePassword">
+  <div class="modal-dialog">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		<h4 class="modal-title">Change Password</h4>
+	  </div>
+	  <div class="modal-body">
+		  <div class="form-group">
+			<input type="Password" class="form-control" ng-model="moldpass" placeholder="Old Password">
+		  </div>
+		  <div class="form-group">
+			<input type="Password" class="form-control" ng-model="mnewpass" placeholder="New Password">
+		  </div>
+		  <div class="form-group">
+			<input type="Password" class="form-control" ng-model="mnewtwopass" placeholder="Re-enter New Password">
+		  </div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-default" ng-click="clickChangePass()">Submit</button>
+		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	  </div>
+	</div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->	
+
+
 <script>
 sys.ctrl = function($scope, $http) {
 	//if(sys.user == null) $scope.go("/home");
+	
+	$scope.newName = "";
+	$scope.moldpass = "";
+	$scope.mnewpass = "";
+	$scope.mnewtwopass = "";
+
+	$scope.callModalChangeName= function(){
+		$('#mchangeName').modal('show');
+	}
+	
+	$scope.callModalChangePass= function(){
+		$('#mchangePassword').modal('show');
+	}
+	
+	$scope.clickChangeName= function(){
+		//do an AJAX request to find whether user exist
+		//the answer depends on the Code field. See file Codes.txt to know what each code means
+		$http.post("request/userModuleCall.php",{email:sys.user.email, section:"setMyName", newName:$scope.newName})
+		.success(function(json) {
+			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+			else if(json["Code"] == 2000){
+				$('#mchangeName').modal('hide');
+				sys.user.Name = $scope.newName;
+				$scope.userinfo.Name = $scope.newName;
+				$scope.newName = "";
+				$('#mMessgTitle').text("Name Modified.");		
+	 			$('#mMessgText').text("Name change has been successful");
+				$('#mMessg').modal('show');
+			}else {	//According to Code 1001 login was unsuccessful
+				$('#mMessgTitle').text("Acction cannot be processed.");		
+	 			$('#mMessgText').text(json["CodeDetails"]);
+				$('#mMessg').modal('show');
+				$scope.emailModify="";
+			}
+		});	
+	}
+	
+	$scope.clickChangePass= function(){
+		//do an AJAX request to find whether user exist
+		//the answer depends on the Code field. See file Codes.txt to know what each code means
+		$http.post("request/userModuleCall.php",{email:sys.user.email, section:"setMyPass", oldPass:$scope.moldpass, newPass:$scope.mnewpass, confPass:$scope.mnewtwopass})
+		.success(function(json) {
+			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+			else if(json["Code"] == 2000){
+				$('#mchangePassword').modal('hide');
+				$scope.moldpass = "";
+				$scope.mnewpass = "";
+				$scope.mnewtwopass = "";
+				$('#mMessgTitle').text("Password Modified.");		
+	 			$('#mMessgText').text("Password change has been successful");
+				$('#mMessg').modal('show');
+			}else {	//According to Code 1001 login was unsuccessful
+				$('#mMessgTitle').text("Acction cannot be processed.");		
+	 			$('#mMessgText').text(json["CodeDetails"]);
+				$('#mMessg').modal('show');
+				$scope.emailModify="";
+			}
+		});	
+	}
 }
 </script>
