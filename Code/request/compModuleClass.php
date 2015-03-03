@@ -237,7 +237,7 @@
 						exit;
 					}else {
 						$this->result["Code"] = 1006;
-						$this->result["CodeDetails"] = "user not found";
+						$this->result["CodeDetails"] = "compound not found";
 						$this->returnJson($this->result);
 						exit;
 					}

@@ -8,47 +8,59 @@
 			<div class="panel-heading">Modify Compound</div>
 			<div class="panel-body">
 				<div class="list-group">
-					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute()"><span class="badge" ng-Click="callModalChangeOneAttribute()">modify</span>Name: {{passVariable.cName}}</a>
-					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute()"><span class="badge" ng-Click="callModalChangeOneAttribute()">modify</span>Formula: {{passVariable.cFormula}}</a>
-					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute()"><span class="badge" ng-Click="callModalChangeOneAttribute()">modify</span>Other Name: {{passVariable.cOName}}</a>
-					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute()"><span class="badge" ng-Click="callModalChangeOneAttribute()">modify</span>Mass: {{passVariable.cMass}}</a>
-					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute()"><span class="badge" ng-Click="callModalChangeOneAttribute()">modify</span>Precursor: {{passVariable.cPrecursor}}</a>
-					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute()"><span class="badge" ng-Click="callModalChangeOneAttribute()">modify</span>Frag: {{passVariable.cFrag}}</a>
-					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute()"><span class="badge" ng-Click="callModalChangeOneAttribute()">modify</span>RT: {{passVariable.cRT}}</a>
-					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute()"><span class="badge" ng-Click="callModalChangeOneAttribute()">modify</span>CAS: {{passVariable.cCAS}}</a>
-					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute()"><span class="badge" ng-Click="callModalChangeOneAttribute()">modify</span>Class: {{passVariable.cClass}}</a>
+					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute('name',passVariable.cName,'changeName')"><span class="badge" ng-Click="callModalChangeOneAttribute('name',passVariable.cName,'changeName')">modify</span>Name: {{passVariable.cName}}</a>
+					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute('formula',passVariable.cFormula,'changeFormula')"><span class="badge" ng-Click="callModalChangeOneAttribute('formula',passVariable.cFormula,'changeFormula')">modify</span>Formula: {{passVariable.cFormula}}</a>
+					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute('other name',passVariable.cOName,'changeOName')"><span class="badge" ng-Click="callModalChangeOneAttribute('other name',passVariable.cOName,'changeOName')">modify</span>Other Name: {{passVariable.cOName}}</a>
+					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute('mass',passVariable.cMass,'changeMass')"><span class="badge" ng-Click="callModalChangeOneAttribute('mass',passVariable.cMass,'changeMass')">modify</span>Mass: {{passVariable.cMass}}</a>
+					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute('precursor count',passVariable.cPrecursor,'changePrec')"><span class="badge" ng-Click="callModalChangeOneAttribute('precursor count',passVariable.cPrecursor,'changePrec')">modify</span>Precursor: {{passVariable.cPrecursor}}</a>
+					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute('frag',passVariable.cFrag,'changeFrag')"><span class="badge" ng-Click="callModalChangeOneAttribute('frag',passVariable.cFrag,'changeFrag')">modify</span>Frag: {{passVariable.cFrag}}</a>
+					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute('RT',passVariable.cRT,'changeRT')"><span class="badge" ng-Click="callModalChangeOneAttribute('RT',passVariable.cRT,'changeRT')">modify</span>RT: {{passVariable.cRT}}</a>
+					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute('CAS',passVariable.cCAS,'changeCAS')"><span class="badge" ng-Click="callModalChangeOneAttribute('CAS',passVariable.cCAS,'changeCAS')">modify</span>CAS: {{passVariable.cCAS}}</a>
+					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute('Class',passVariable.cClass,'changeClass')"><span class="badge" ng-Click="callModalChangeOneAttribute('Class',passVariable.cClass,'changeClass')">modify</span>Class: {{passVariable.cClass}}</a>
+					<a href="#userModPrec" class="list-group-item active"> See Precursors</a>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
 
+<div class="modal fade" id="mchangeOneAtt">
+  <div class="modal-dialog">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		<h4 class="modal-title" id="mMessgTitle">Change data</h4>
+	  </div>
+	  <div class="modal-body">
+		  <div class="form-group">
+			<input type="text" class="form-control" ng-model="newAttr">
+		  </div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-default" ng-click="clickChangeName()">Submit</button>
+		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	  </div>
+	</div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->	
 
 <script>
 sys.ctrl = function($scope, $http) {
 	//if(sys.user == null) $scope.go("/home");
+	$scope.newAttr = "";
 	$scope.passVariable = sys.passVariable;
-	console.log(sys.passVariable);
-	console.log($scope.passVariable);
-	$scope.callModalChangeOneAttribute= function(){
-		//do an AJAX request to find whether user exist
-		//the answer depends on the Code field. See file Codes.txt to know what each code means
-		$http.post("request/compModuleCall.php",{section:"getComp", searchCriteria: $scope.SearchCriteria})
-		.success(function(json) {
-			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
-			else if(json["Code"] == 2000){
-				$scope.SearchCriteria = "";
-				$scope.passVariable = json["data"];
-				$scope.go("/userModCompund");
-			}else {	//According to Code 1001 login was unsuccessful
-				$('#mMessgTitle').text("Acction cannot be processed.");		
-	 			$('#mMessgText').text(json["CodeDetails"]);
-				$('#mMessg').modal('show');
-				$scope.emailModify="";
-			}
-		});		
+	$scope.section = "";
+	
+	$scope.callModalChangeOneAttribute= function(title, value,section){
+		console.log(title);
+		$scope.newAttr = value;
+		$scope.section = section;
+		$('#mMessgTitle').text("Change "+title);		
+		$('#mchangeOneAtt').modal('show');
 	}
 	
-	
+	$scope.callModalSubmit= function(){
+	 
+	}	
 }
 </script>	

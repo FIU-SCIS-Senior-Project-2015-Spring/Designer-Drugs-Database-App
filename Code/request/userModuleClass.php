@@ -14,19 +14,36 @@
 		private $dbConfig;
 		private $userRequestType;
 
-		public function __construct($loggedUser, $theRequests, $dbConfig)
+		public function __construct($theRequests, $dbConfig)
 		{
 			$this->sql = "";
 			$this->counter = 1;
 			$this->result = array();
 			$this->result["Code"] = 2000;
-			$this->result["loggedUser"] = $loggedUser;
 			$this->arrayOfRequest = array();
 			$this->arrayOfRequest[0] = $theRequests["email"]; 
 			$this->requests = $theRequests;
 			$this->dbConfig = $dbConfig;
 			$this->userRequestType = "";
 
+			////////////check session///////////
+			//setup to call the authmodule
+			$tempSection = $theRequests["section"];
+			$theRequests["section"] = "testSesionInfo";
+			
+			//load authModule class
+			include("authModuleClass.php");	
+			
+			//call authModule
+			$myauth = new authModule($theRequests, $dbConfig);
+			$loggedIn = $myauth->authRequest();
+			$this->result["loggedUser"] = $loggedIn["loggedIn"];
+			
+			//setup to call user module
+			$_REQUEST["section"] = $tempSection;
+
+			//////////////////////////////////
+			
 			$this->checkVariableNotEmpty($this->arrayOfRequest[0], "email");
 			$this->checkVariableNotEmpty($this->result["loggedUser"], "logged user");
 		}

@@ -29,9 +29,8 @@ sys.ctrl = function($scope, $http) {
 			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
 			else if(json["Code"] == 2000){
 				$scope.SearchCriteria = "";
-				sys.passingVariable = json["data"];
+				sys.passVariable = json["data"];
 				$scope.go("/userModCompund");
-						console.log($scope.passVariable);
 			}else {	//According to Code 1001 login was unsuccessful
 				$('#mMessgTitle').text("Acction cannot be processed.");		
 	 			$('#mMessgText').text(json["CodeDetails"]);
