@@ -46,5 +46,13 @@ eigth download or copy the application files in your Apache designated folder
 Note: it does not have to exactly be but in my case the folder was located into /var/www/html
 --------------------------------------------
 finally create the database using the file in Code/database
+
+need to login with super user permision, to do this use:
+sudo -su
+then enter your password if needed
+
+then go to the folder that contains the .sql file and enetr:
+mysql -u root -p < drugsdb.sql
+then enter the password when requested
 --------------------------------------------
 

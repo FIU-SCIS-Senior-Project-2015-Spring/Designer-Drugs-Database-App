@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 
 DROP DATABASE drugsdb;
 CREATE DATABASE drugsdb;
-USE DATABASE drugsdb;
+USE drugsdb;
 --
 -- Database: `drugsdb`
 --
