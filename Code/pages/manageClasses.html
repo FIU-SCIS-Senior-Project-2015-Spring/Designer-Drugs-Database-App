@@ -1,0 +1,147 @@
+<!-- manage classes -->
+<div class="col-lg-offset-1">
+	<div class="col-lg-3">
+		<div ng-include="'pages/userMenu.html'"></div>
+	</div>
+	<div class="col-lg-7" id="userMainDtail">
+		<div class="panel panel-primary">
+			<div class="panel-heading">Manage Classes</div>
+			<div class="panel-body">
+				<div class="list-group">
+					<a ng-repeat="item in r[0].data" class="list-group-item"  ng-Click="callModalEditClass($index)">Name: {{item.label}}</a>
+				</div>
+			</div>
+			<div class="panel-footer">
+				<button type="button" class="btn btn-info" ng-click="callModalAddClass()">Add Class</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="maddClass">
+  <div class="modal-dialog">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			<h4 class="modal-title" ng-show="modalAction=='ADD'">Add Class</h4>
+			<h4 class="modal-title" ng-show="modalAction=='EDIT'">Edit Class</h4>
+	  </div>
+	  <div class="modal-body">
+		  <div class="form-group">
+			<input type="text" class="form-control" ng-model="newClass">
+		  </div>
+		  <div class="alert alert-info" role="alert" ng-show="modalAction=='EDIT' && showDelete==false"> Delete class is disable because this class contains several compounds. update compounds classes or remove compounds to delete class</div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-default" ng-click="addClass()"  ng-show="modalAction=='ADD'">Add</button>
+		<button type="button" class="btn btn-default" ng-click="editClass()" ng-show="modalAction=='EDIT'">Submit Changes</button>
+		<button type="button" class="btn btn-default" ng-click="deleteClass()" ng-show="modalAction=='EDIT' && showDelete==true">Delete Class</button>
+		<button type="button" class="btn btn-default disabled" ng-show="modalAction=='EDIT' && showDelete==false">Delete Class</button>
+		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	  </div>
+	</div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->		
+
+<script>
+
+sys.q = [
+{method: 'POST',url: 'request/compModuleCall.php?nocache=1',data: { section: 'getClass' }}
+];
+
+
+sys.ctrl = function($scope, $http) {
+$scope.newClass = "";
+$scope.modalAction = "";
+$scope.showDelete = false;
+$scope.classIndex = "";
+
+	$scope.callModalAddClass= function(){
+		$scope.newClass = "";
+		$scope.modalAction = "ADD";
+		$('#maddClass').modal('show');
+	}
+
+	$scope.callModalEditClass= function(index){
+		$http.post("request/compModuleCall.php",
+		{section:"getClassCount",
+		cClass: $scope.r[0].data[index].id})
+		.success(function(json) {
+			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+			else if(json["Code"] == 2000){
+				if(json["data"][0]["count"] >0) $scope.showDelete = false;
+				else $scope.showDelete = true;
+				$scope.newClass = $scope.r[0].data[index].label;
+				$scope.modalAction = "EDIT";
+				$scope.classIndex = index;
+				$('#maddClass').modal('show');
+				}else{
+				$('#mMessgTitle').text("Acction cannot be processed.");		
+				$('#mMessgText').text(json["CodeDetails"]);
+				$('#mMessg').modal('show');	
+			}
+		});
+	}
+	
+
+	$scope.addClass= function(){
+		$http.post("request/compModuleCall.php",
+		{section:"addClass",
+		cClass: $scope.newClass})
+		.success(function(json) {
+			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+			else if(json["Code"] == 2000){
+				$scope.r[0].data.push({"id":json["data"]["lastRecordId"],"label":$scope.newClass});
+				$('#maddClass').modal('hide');
+				$('#mMessgTitle').text("Acction successful.");		
+				$('#mMessgText').text("Class has been added");
+				$('#mMessg').modal('show');	
+				}else{
+				$('#mMessgTitle').text("Acction cannot be processed.");		
+				$('#mMessgText').text(json["CodeDetails"]);
+				$('#mMessg').modal('show');	
+			}
+		});
+	}	
+	
+	$scope.editClass= function(){
+		$http.post("request/compModuleCall.php",
+		{section:"editClass",
+		cClass: $scope.newClass,
+		cid: $scope.r[0].data[$scope.classIndex].id})
+		.success(function(json) {
+			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+			else if(json["Code"] == 2000){
+				$scope.r[0].data[$scope.classIndex].label = $scope.newClass;
+				$('#maddClass').modal('hide');
+				$('#mMessgTitle').text("Success");		
+				$('#mMessgText').text("Class Updated");
+				$('#mMessg').modal('show');	
+				}else{
+				$('#mMessgTitle').text("Acction cannot be processed.");		
+				$('#mMessgText').text(json["CodeDetails"]);
+				$('#mMessg').modal('show');	
+			}
+		});
+	}
+	
+	$scope.deleteClass= function(){
+		$http.post("request/compModuleCall.php",
+		{section:"deleteClass",
+		cid: $scope.r[0].data[$scope.classIndex].id})
+		.success(function(json) {
+			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+			else if(json["Code"] == 2000){
+				$scope.r[0].data.splice($scope.classIndex,1);
+				$('#maddClass').modal('hide');
+				$('#mMessgTitle').text("Success");		
+				$('#mMessgText').text("Class deleted");
+				$('#mMessg').modal('show');	
+				}else{
+				$('#mMessgTitle').text("Acction cannot be processed.");		
+				$('#mMessgText').text(json["CodeDetails"]);
+				$('#mMessg').modal('show');	
+			}
+		});
+	}
+}

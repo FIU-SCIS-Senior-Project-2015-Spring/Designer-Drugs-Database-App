@@ -1,0 +1,41 @@
+<!-- account Details -->
+<div class="col-lg-offset-1">
+	<div class="col-lg-3">
+		<div ng-include="'pages/userMenu.html'"></div>
+	</div>
+	<div class="col-lg-7" id="userMainDtail">
+		<div class="panel panel-primary">
+			<div class="panel-heading">Import Compounds</div>
+			<div class="panel-body">
+				<div class="panel panel-primary"><div class="panel-body">
+				Enter csv file
+				<div>
+					<input type="file" ng-file-select="onFileSelect($files)" accept="csv/*">
+				</div>
+				</div></div>
+				<div class="panel panel-primary"><div class="panel-body">
+				Show folder where compound pictures are located
+				<div>
+					<input type="file" ng-file-select="onFileSelect($files)" accept="folder/*">
+				</div>
+				</div></div>
+			</div>
+			<div class="panel-footer">
+				<button type="button" class="btn btn-info" ng-click="upload()">Upload</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+sys.q = [
+	{method: 'POST',url: 'request/compModuleCall.php',data: { section: 'getClass' }}
+];
+
+sys.ctrl = function($scope, $http) {
+
+		$scope.upload = function(){
+		}
+
+}
+</script>

@@ -3,21 +3,22 @@
 		<div class="col-md-6 col-md-offset-3">
 			<div class="form-group">
 				<div class="input-group">
-					<input class="form-control" type="text" placeholder="input formula or name"/>
+					<input class="form-control" type="text" placeholder="input formula or name" ng-model="SearchCriteria"/>
 					<a href="#home" ng-click="showList()" class="input-group-addon btn btn-primary" >Search Now!</a>
 				</div>
 			</div>
 		</div>
 	</div>
+	
 	<div class="row">
 		<div class="col-md-6 col-md-offset-3">		
 			<div class="panel panel-default">
 			  <div class="panel-heading">Compound classes</div>
 			  <div class="panel-body">
 				<ul class="list-group">
-				  <a href="#home" class="list-group-item" ng-repeat="items in r[0]">
-				  <button type="button" class="btn btn-default badge"><span class="glyphicon glyphicon-download-alt"></span></button>
-					{{items["class"]}}
+				  <a href="#home" class="list-group-item" ng-repeat="items in r[0].data" ng-click="download($index)">
+				  <button type="button" class="btn btn-default badge" ng-click="download($index)"><span class="glyphicon glyphicon-download-alt"></span></button>
+					{{items.label}}
 				  </a>
 				</ul>
 			</div>
@@ -25,7 +26,6 @@
 		</div>
 	</div>
 </div>
-
 
 <!--item list-->
 <div class="modal" id="resultList">
@@ -37,7 +37,7 @@
 	  </div>
 	  <div class="modal-body">
 		<div class="list-group">
-		  <a ng-href ng-Click="selectOne(items.cid)" class="list-group-item" ng-repeat="items in resultL">{{items.cFormula}} : {{items.cName}}</a>
+		  <a ng-href ng-Click="selectOne($index)" class="list-group-item" ng-repeat="items in resultL">{{items.cFormula}} : {{items.cName}}</a>
 		</div>
 	  </div>
 	  <div class="modal-footer">
@@ -51,25 +51,49 @@
 <!--contoller-->
 <script>
 sys.q = [
-	{url:"request/classList.php"}
+	{method: 'POST',url: 'request/compModuleCall.php?nocache=1',data: { section: 'getClass' }}
 ];
 
 sys.ctrl = function($scope, $http) {
 	$scope.resultL = [];
+	$scope.SearchCriteria = "";
 
 	$scope.showList = function() {		
-		$http.get("request/searchResultList.php").success(function(json) {
-			$scope.resultL = json;
-			$('#resultList').modal('show');	
-		});
+		//do an AJAX request to find whether user exist
+		//the answer depends on the Code field. See file Codes.txt to know what each code means
+		$http.post("request/compModuleCall.php",{section:"getComp", searchCriteria: $scope.SearchCriteria})
+		.success(function(json) {
+			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+			else if(json["Code"] == 2000){
+				$scope.SearchCriteria = "";
+				if(json["data"].length >1){
+					$scope.resultL = json["data"];
+					sys.passVariable = json;
+					$('#resultList').modal('show');					
+				}else{
+					sys.passVariable = json["data"][0];
+					$scope.go("/item");
+				}
+
+			}else {	//According to Code 1001 login was unsuccessful
+				$('#mMessgTitle').text("Acction cannot be processed.");		
+	 			$('#mMessgText').text(json["CodeDetails"]);
+				$('#mMessg').modal('show');
+				$scope.emailModify="";
+			}
+		});	
 		
 	};
 	
 	$scope.selectOne= function(number){
 		//console.log(number);
 		$('#resultList').modal('hide');
+		sys.passVariable = sys.passVariable["data"][number];
 		 //$modalInstance.close($scope.selected.item);
 		$scope.go('/item');
+	}
+	
+	$scope.download= function(index){
 	}
 }
 </script>

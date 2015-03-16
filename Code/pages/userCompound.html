@@ -5,21 +5,47 @@
 	</div>
 	<div class="col-lg-7"  id="userMainBuy">
 		<div class="panel panel-primary">
-			<div class="panel-heading">Compounds</div>
+			<div class="panel-heading">Search Compounds</div>
 			<div class="panel-body">
 				<div class="input-group">
 					<input class="form-control" type="text" placeholder="input formula or name" ng-model="SearchCriteria"/>
 					<a ng-href="" ng-click="clickSearch()" class="input-group-addon btn btn-primary" >Search Now!</a>
 				</div>
 			</div>
+			<div class="panel-footer">
+				<a ng-href="#userAddComp" class="btn btn-info" >Add new Compound</a>
+				<a ng-href="" ng-click="gotoImportPage()" class="btn btn-info" >Import Compounds</a>
+				<a ng-href="" ng-click="gotoClassesPage()" class="btn btn-info" >Manage Compound Classes</a>
+			</div>
 		</div>
 	</div>
 </div>
+
+<!--item list-->
+<div class="modal" id="resultList">
+  <div class="modal-dialog">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		<h4 class="modal-title">Select the proper element,</h4>
+	  </div>
+	  <div class="modal-body">
+		<div class="list-group">
+		  <a ng-href ng-Click="selectOne($index)" class="list-group-item" ng-repeat="items in resultL">{{items.cFormula}} : {{items.cName}}</a>
+		</div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+	  </div>
+	</div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 <script>
 sys.ctrl = function($scope, $http) {
 	//if(sys.user == null) $scope.go("/home");
 	$scope.SearchCriteria = "";
+	$scope.resultL = [];
 	
 	$scope.clickSearch= function(){
 		//do an AJAX request to find whether user exist
@@ -29,8 +55,14 @@ sys.ctrl = function($scope, $http) {
 			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
 			else if(json["Code"] == 2000){
 				$scope.SearchCriteria = "";
-				sys.passVariable = json["data"];
-				$scope.go("/userModCompund");
+				if(json["data"].length >1){
+					$scope.resultL = json["data"];
+					$('#resultList').modal('show');					
+				}else{
+					sys.passVariable = json["data"][0];
+					$scope.go("/userModCompund");
+				}
+
 			}else {	//According to Code 1001 login was unsuccessful
 				$('#mMessgTitle').text("Acction cannot be processed.");		
 	 			$('#mMessgText').text(json["CodeDetails"]);
@@ -40,6 +72,19 @@ sys.ctrl = function($scope, $http) {
 		});		
 	}
 	
+	$scope.selectOne= function(cid){
+		$('#resultList').modal('hide');
+		sys.passVariable = $scope.resultL[cid];
+		$scope.go("/userModCompund");
+	}
+
+	$scope.gotoImportPage= function(){
+		$scope.go("/importCompounds");
+	}
 	
+	$scope.gotoClassesPage= function(){
+		$scope.go("/manageClasses");
+	}
+
 }
 </script>	

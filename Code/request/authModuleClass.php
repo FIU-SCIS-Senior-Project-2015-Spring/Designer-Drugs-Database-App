@@ -32,8 +32,8 @@
 				break;			
 			default:
 			   $this->result["Code"] = 1002;
-			   $this->result["CodeDetails"] = "wrong section";
-			   $this->returnJson($result);
+			   $this->result["CodeDetails"] = "wrong section, section cannot be ". $this->requests["section"].".";
+			   $this->returnJson($this->result);
 			   exit; 
 			}
 		}

@@ -5,62 +5,243 @@
 	</div>
 	<div class="col-lg-7" id="userMainDtail">
 		<div class="panel panel-primary">
-			<div class="panel-heading">Modify Compound</div>
+			<div class="panel-heading">Add Compound</div>
 			<div class="panel-body">
-				<div class="list-group">
-					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute('name',passVariable.cName,'changeName')"><span class="badge" ng-Click="callModalChangeOneAttribute('name',passVariable.cName,'changeName')">modify</span>Name: {{passVariable.cName}}</a>
-					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute('formula',passVariable.cFormula,'changeFormula')"><span class="badge" ng-Click="callModalChangeOneAttribute('formula',passVariable.cFormula,'changeFormula')">modify</span>Formula: {{passVariable.cFormula}}</a>
-					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute('other name',passVariable.cOName,'changeOName')"><span class="badge" ng-Click="callModalChangeOneAttribute('other name',passVariable.cOName,'changeOName')">modify</span>Other Name: {{passVariable.cOName}}</a>
-					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute('mass',passVariable.cMass,'changeMass')"><span class="badge" ng-Click="callModalChangeOneAttribute('mass',passVariable.cMass,'changeMass')">modify</span>Mass: {{passVariable.cMass}}</a>
-					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute('precursor count',passVariable.cPrecursor,'changePrec')"><span class="badge" ng-Click="callModalChangeOneAttribute('precursor count',passVariable.cPrecursor,'changePrec')">modify</span>Precursor: {{passVariable.cPrecursor}}</a>
-					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute('frag',passVariable.cFrag,'changeFrag')"><span class="badge" ng-Click="callModalChangeOneAttribute('frag',passVariable.cFrag,'changeFrag')">modify</span>Frag: {{passVariable.cFrag}}</a>
-					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute('RT',passVariable.cRT,'changeRT')"><span class="badge" ng-Click="callModalChangeOneAttribute('RT',passVariable.cRT,'changeRT')">modify</span>RT: {{passVariable.cRT}}</a>
-					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute('CAS',passVariable.cCAS,'changeCAS')"><span class="badge" ng-Click="callModalChangeOneAttribute('CAS',passVariable.cCAS,'changeCAS')">modify</span>CAS: {{passVariable.cCAS}}</a>
-					<a ng-href class="list-group-item"  ng-Click="callModalChangeOneAttribute('Class',passVariable.cClass,'changeClass')"><span class="badge" ng-Click="callModalChangeOneAttribute('Class',passVariable.cClass,'changeClass')">modify</span>Class: {{passVariable.cClass}}</a>
-					<a href="#userModPrec" class="list-group-item active"> See Precursors</a>
+				<div class="form-group">
+					<div>
+						<input type="file" ng-file-select="onFileSelect($files)" accept="image/*">
+					</div>
+					<input class="form-control" type="text" placeholder="input Name" ng-model="r[1].data[0].cName"/>
+					<input class="form-control" type="text" placeholder="input Formula" ng-model="r[1].data[0].cFormula"/>
+					<input class="form-control" type="text" placeholder="input Other Name" ng-model="r[1].data[0].cOName"/>
+					<input class="form-control" type="text" placeholder="input Mass" ng-model="r[1].data[0].cMass"/>
+					<input class="form-control" type="text" placeholder="input Frag" ng-model="r[1].data[0].cFrag"/>
+					<input class="form-control" type="text" placeholder="input Retention time" ng-model="r[1].data[0].cRT"/>
+					<input class="form-control" type="text" placeholder="input Precursor" ng-model="r[1].data[0].cPrecursor"/>
+					<input class="form-control" type="text" placeholder="input CAS" ng-model="r[1].data[0].cCAS"/>
+					<select ng-model="r[1].data[0].cClass" class="form-control" ng-options="item.label for item in r[0].data track by item.id"></select>
 				</div>
 			</div>
+			<div class="panel-footer">
+				<button type="button" class="btn btn-info" ng-click="callADDTransitionModal()">Add Transition</button>
+				<button type="button" class="btn btn-info" ng-click="Submit()">Update Compound Info</button>
+				<button type="button" class="btn btn-info" ng-click="deleteCompound()">Delete Compound</button>
+			</div>
 		</div>
+		
+		<div class="panel panel-primary">
+			<div class="panel-heading">Transitions</div>
+			<div class="panel-body">
+				<div class="panel panel-primary" ng-repeat="item in r[2].data">
+					<div class="panel-heading">Transition # {{$index}}</div>
+					<div class="panel-body">
+						Product: {{item.tProduct}}</br>
+						CE: {{item.tCE}}</br>
+						Abundance: {{item.tAbundance}}</br>
+						Intensity: {{item.tRIInt}}
+					</div>
+					<div class="panel-footer">
+					<button type="button" class="btn btn-info" ng-click="callEditTransitionModal($index)">Edit</button>
+					<button type="button" class="btn btn-info" ng-click="deleteTransition($index)">Delete</button>
+					</div>
+				</div>
+			</div>
+		</div>						
 	</div>
 </div>
 
-<div class="modal fade" id="mchangeOneAtt">
+<!--modify transition-->
+<div class="modal" id="maddTrans">
   <div class="modal-dialog">
 	<div class="modal-content">
-	  <div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-		<h4 class="modal-title" id="mMessgTitle">Change data</h4>
-	  </div>
-	  <div class="modal-body">
-		  <div class="form-group">
-			<input type="text" class="form-control" ng-model="newAttr">
-		  </div>
-	  </div>
-	  <div class="modal-footer">
-		<button type="button" class="btn btn-default" ng-click="clickChangeName()">Submit</button>
-		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-	  </div>
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			<h4 class="modal-title" ng-show="modalAction=='ADD'">Add Transition</h4>
+			<h4 class="modal-title" ng-show="modalAction=='EDIT'">Edit Transition</h4>
+		</div>
+		<div class="modal-body">
+			<input class="form-control" type="text" placeholder="input Product" ng-model="TransProd"/>
+			<input class="form-control" type="text" placeholder="input CE" ng-model="TransCE"/>
+			<input class="form-control" type="text" placeholder="input Abundance" ng-model="TransAbd"/>
+			<input class="form-control" type="text" placeholder="input R Intensity" ng-model="TransInt"/>
+		</div>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-default" ng-click="editTransition(editId)" ng-show="modalAction=='EDIT'">Submit changes</button>
+			<button type="button" class="btn btn-default" ng-click="addTransition()" ng-show="modalAction=='ADD'">Add</button>
+			<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+		</div>
 	</div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->	
+</div><!-- /.modal -->
+
 
 <script>
+
+//sys.q = [
+//{method: 'POST',url: 'request/compModuleCall.php?nocache=1',data: { section: 'getClass' }},
+//{method: 'POST',url: 'request/compModuleCall.php?nocache=2',data: { section: 'getCompbyId', id: 2}},
+//{method: 'POST',url: 'request/compModuleCall.php?nocache=3',data: { section: 'getTrans', CompId: 2 }}
+//];
+
+sys.q = [
+{method: 'POST',url: 'request/compModuleCall.php?nocache=1',data: { section: 'getClass' }},
+{method: 'POST',url: 'request/compModuleCall.php?nocache=2',data: { section: 'getCompbyId', id: sys.passVariable.cid}},
+{method: 'POST',url: 'request/compModuleCall.php?nocache=3',data: { section: 'getTrans', CompId: sys.passVariable.cid }}
+];
+
+
 sys.ctrl = function($scope, $http) {
 	//if(sys.user == null) $scope.go("/home");
-	$scope.newAttr = "";
-	$scope.passVariable = sys.passVariable;
-	$scope.section = "";
 	
-	$scope.callModalChangeOneAttribute= function(title, value,section){
-		console.log(title);
-		$scope.newAttr = value;
-		$scope.section = section;
-		$('#mMessgTitle').text("Change "+title);		
-		$('#mchangeOneAtt').modal('show');
+//	$scope.selectedClass="";
+	$scope.modalAction = "";
+	$scope.TransProd = "";
+	$scope.TransCE = "";
+	$scope.TransAbd = "";
+	$scope.TransInt = "";
+	
+	$scope.callEditTransitionModal= function(id){
+		$scope.TransProd = $scope.r[2].data[id].tProduct;
+		$scope.TransCE = $scope.r[2].data[id].tCE;
+		$scope.TransAbd = $scope.r[2].data[id].tAbundance;
+		$scope.TransInt = 	$scope.r[2].data[id].tRIInt;
+		$scope.modalAction = "EDIT";
+		$scope.editId = id;
+		$('#maddTrans').modal('show');
 	}
 	
-	$scope.callModalSubmit= function(){
-	 
+	$scope.callADDTransitionModal= function(){
+		$scope.TransProd = "";
+		$scope.TransCE = "";
+		$scope.TransAbd = "";
+		$scope.TransInt = "";
+		$scope.modalAction = "ADD";
+		$('#maddTrans').modal('show');		
+	}
+	
+	$scope.Submit= function(){
+		//console.log($scope.r[1].data[0].cClass+"number");
+		$http.post("request/compModuleCall.php",
+		{cName: $scope.r[1].data[0].cName,
+		cFormula: $scope.r[1].data[0].cFormula,
+		cOName: $scope.r[1].data[0].cOName,
+		cMass: $scope.r[1].data[0].cMass,
+		cPrecursor: $scope.r[1].data[0].cPrecursor,
+		cFrag: $scope.r[1].data[0].cFrag,
+		cRT: $scope.r[1].data[0].cRT,
+		cCAS: $scope.r[1].data[0].cCAS,
+		cClass : $scope.r[1].data[0].cClass,
+		cid : $scope.r[1].data[0].cid,
+		section:"editComp"})
+		.success(function(json) {
+			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+			else if(json["Code"] == 2000){
+				$('#mMessgTitle').text("Success.");		
+				$('#mMessgText').text("Compound has been updated.");
+				$('#mMessg').modal('show');
+				$scope.go("/userCompound");
+				}else{
+				$('#mMessgTitle').text("Acction cannot be processed.");		
+				$('#mMessgText').text(json["CodeDetails"]);
+				$('#mMessg').modal('show');	
+			}
+		});
 	}	
+	
+	$scope.deleteCompound = function(){
+		$http.post("request/compModuleCall.php",
+		{section:"deleteComp",
+		cid: $scope.r[1].data[0].cid})
+		.success(function(json) {
+			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+			else if(json["Code"] == 2000){
+				$('#mMessgTitle').text("Success.");		
+				$('#mMessgText').text("Transition deleted.");
+				$('#mMessg').modal('show');
+				$scope.go("/userCompound");
+				}else{
+				$('#mMessgTitle').text("Acction cannot be processed.");		
+				$('#mMessgText').text(json["CodeDetails"]);
+				$('#mMessg').modal('show');	
+			}
+		});
+	 
+	}
+	
+	$scope.deleteTransition = function(transId){
+		$http.post("request/compModuleCall.php",
+		{section:"deleteTrans",
+		Transid: $scope.r[2].data[transId].tid})
+		.success(function(json) {
+			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+			else if(json["Code"] == 2000){
+				$scope.r[2].data.splice(transId, 1);
+				$('#mMessgTitle').text("Success.");		
+				$('#mMessgText').text("Transition deleted.");
+				$('#mMessg').modal('show');
+				}else{
+				$('#mMessgTitle').text("Acction cannot be processed.");		
+				$('#mMessgText').text(json["CodeDetails"]);
+				$('#mMessg').modal('show');	
+			}
+		});	
+	}
+	
+	$scope.editTransition = function(transId){
+		$('#maddTrans').modal('hide');
+		$http.post("request/compModuleCall.php",
+		{section:"editTrans",
+		Transid: $scope.r[2].data[transId].tid,
+		product: $scope.TransProd,
+		CE : $scope.TransCE,
+		Abd: $scope.TransAbd,
+		Intens: $scope.TransInt
+		})
+		.success(function(json) {
+			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+			else if(json["Code"] == 2000){
+				$scope.r[2].data[transId].tProduct = $scope.TransProd;
+				$scope.r[2].data[transId].tCE = $scope.TransCE;
+				$scope.r[2].data[transId].tAbundance = $scope.TransAbd;
+				$scope.r[2].data[transId].tRIInt = $scope.TransInt;
+				
+				$('#mMessgTitle').text("Success.");		
+				$('#mMessgText').text("Transition updated.");
+				$('#mMessg').modal('show');
+				}else{
+				$('#mMessgTitle').text("Acction cannot be processed.");		
+				$('#mMessgText').text(json["CodeDetails"]);
+				$('#mMessg').modal('show');	
+			}
+		});	
+	}	
+	
+	$scope.addTransition = function(){
+		$('#maddTrans').modal('hide');
+		$scope.compTrans = [];
+		$scope.compTrans.push({"cid":$scope.r[1].data[0].cid,"product":$scope.TransProd,"CE":$scope.TransCE,"Abd":$scope.TransAbd,"Intens":$scope.TransInt});
+		//console.log("Trans: "$scope.compTrans);
+			
+		$http.post("request/compModuleCall.php",
+		{section:"addTrans",
+		Trans: $scope.compTrans
+		})
+		.success(function(json) {
+			console.log(json);
+			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+			else if(json["Code"] == 2000){
+				$scope.r[2].data.push({"cid":$scope.r[1].data[0].cid,"tid":json["data"]["lastRecordId"],"tProduct":$scope.TransProd,"tCE":$scope.TransCE,"tAbundance":$scope.TransAbd,"tRIInt":$scope.TransInt});
+				$('#mMessgTitle').text("Success.");		
+				$('#mMessgText').text("Transition added.");
+				$('#mMessg').modal('show');
+				}else{
+				$('#mMessgTitle').text("Acction cannot be processed.");		
+				$('#mMessgText').text(json["CodeDetails"]);
+				$('#mMessg').modal('show');	
+			}
+		});	 
+	}	
+	
 }
+
 </script>	

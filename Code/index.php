@@ -11,12 +11,15 @@
 	<script src="js/jquery-1.11.1.min.js"></script>
 	<!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">-->
 	<link href="css/bootstrap.min.css" rel="stylesheet">
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.1/angular.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.1/angular-route.js"></script>
+	
+	
+	<!-- TODO uncomment the next two links and comments the next 5, 6 link when have internet -->
+	<!-- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.1/angular.min.js"></script>-->
+	<!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.1/angular-route.js"></script>-->
 	<!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.1/angular-resource.js"></script>-->	
 	<script src="js/angular-file-upload-shim.min.js"></script> 
-	<!--<script src="js/angular.min.js"></script>-->
-	<!--<script src="js/angular-route.js"></script>-->
+	<script src="js/angular.min.js"></script>
+	<script src="js/angular-route.js"></script>
 	<script src="js/angular-file-upload.min.js"></script> 
 	<link href="css/styles.css" rel="stylesheet">
 </head>			

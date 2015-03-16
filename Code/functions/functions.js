@@ -91,12 +91,14 @@ myapp.controller('MyController', function($scope, $http, $location) {
             });
         });
     }
-	if(angular.isFunction(sys.ctrl)) sys.ctrl($scope,$http);
-	sys.ctrl = null;
-	
+
 	$scope.go = function ( path ) {
 		$location.path( path );
-	};
+	};	
+	
+	if(angular.isFunction(sys.ctrl)) sys.ctrl($scope,$http);
+	sys.ctrl = null;
+
 });
 
 
@@ -229,90 +231,3 @@ myapp.controller('ControllerResultOne', function($scope) {
 		});
 	}
 });
-
-/*
-myapp.controller('ControllerNewUser', function($scope) {
-    $scope.fName="";
-	$scope.mName="";
-	$scope.lName="";
-	$scope.schoolName="";
-	$scope.email="";
-	$scope.password1="";
-	$scope.password2="";
-
-	
-	$scope.CreateUser= function(){
-		alert($scope.email);
-	}    
-
-	$scope.clickCreateNewUser= function(){
-		$scope.CreateUser();
-		$scope.fName="";
-		$scope.mName="";
-		$scope.lName="";
-		$scope.schoolName="";
-		$scope.email="";
-		$scope.password1="";
-		$scope.password2="";	
-	}
-
-});
-
-
-myapp.controller('ControllerAccountMenu', function($scope) {
-	//TODO this need to change and come from the login result
-	$scope.userinfo = new Array();
-	$scope.userinfo.permission ='none';
-	
-	$scope.clicksumary= function(){
-		show_Page(7);
-	}
-
-	$scope.clickCourseDetails= function(){
-		show_Page(10);
-	}
-	
-	$scope.clickCourseManagment= function(){
-		show_Page(11);
-	}	
-
-	$scope.clickAccountDetails= function(){
-		show_Page(12);
-	}	
-	
-	$scope.clickMessages= function(){
-		show_Page(13);
-	}
-
-	$scope.clickMnanageUsers = function(){
-		show_Page(20);
-	}
-});
-
-myapp.controller('ControllerAccountSummary', function($scope) {
-	$scope.userinfo = new Array();
-	$scope.userinfo.permission = mydesignerdrug.userinfo.permission;
-
-	
-	$scope.refreshContent= function(){
-		var $scope2 = angular.element($("#login")).scope();
-		$scope.userinfo = $scope2.getUserInfo();
-	}
-
-});
-
-myapp.controller('ControllerCourseDetail', function($scope) {
-});
-
-myapp.controller('ControllerAccountMsg', function($scope) {
-});
-
-myapp.controller('ControllerAccountDetail', function($scope) {
-});
-
-myapp.controller('ControllerManageUsers', function($scope) {
-});
-*/
-
-
-

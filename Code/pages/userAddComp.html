@@ -1,0 +1,163 @@
+<!-- account Details -->
+<div class="col-lg-offset-1">
+	<div class="col-lg-3">
+		<div ng-include="'pages/userMenu.html'"></div>
+	</div>
+	<div class="col-lg-7" id="userMainDtail">
+		<div class="panel panel-primary">
+			<div class="panel-heading">Add Compound</div>
+			<div class="panel-body">
+				<div class="form-group">
+					<div>
+						<input type="file" ng-file-select="onFileSelect($files)" accept="image/*">
+					</div>
+					<input class="form-control" type="text" placeholder="input Name" ng-model="compName"/>
+					<input class="form-control" type="text" placeholder="input Formula" ng-model="compFormula"/>
+					<input class="form-control" type="text" placeholder="input Other Name" ng-model="otherName"/>
+					<input class="form-control" type="text" placeholder="input Mass" ng-model="compMass"/>
+					<input class="form-control" type="text" placeholder="input Frag" ng-model="compfrag"/>
+					<input class="form-control" type="text" placeholder="input Retention time" ng-model="compRT"/>
+					<input class="form-control" type="text" placeholder="input Precursor" ng-model="compPrec"/>
+					<input class="form-control" type="text" placeholder="input CAS" ng-model="compCAS"/>
+					<select ng-model="selectedClass" class="form-control" ng-options="item.label for item in r[0].data track by item.id"></select>
+				</div>
+			</div>
+			<div class="panel-footer">
+					<button type="button" class="btn btn-info" ng-click="callADDTransitionModal()">Add Transition</button>
+					<button type="button" class="btn btn-info" ng-click="submitComp()">Submit All</button>
+			</div>
+		</div>
+		<div class="panel panel-primary">
+			<div class="panel-heading">Transitions</div>
+			<div class="panel-body">
+				<div class="panel panel-primary" ng-repeat="item in compTrans">
+					<div class="panel-heading">Transition # {{$index}}</div>
+					<div class="panel-body">
+						Product: {{item.product}}</br>
+						CE: {{item.CE}}</br>
+						Abundance: {{item.Abd}}</br>
+						Intensity: {{item.Intens}}
+					</div>
+					<div class="panel-footer">
+					<button type="button" class="btn btn-info" ng-click="callEditTransitionModal($index)">Edit</button>
+					<button type="button" class="btn btn-info" ng-click="deleteTransition($index)">Delete</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--modify Transition-->
+<div class="modal" id="maddTrans">
+  <div class="modal-dialog">
+	<div class="modal-content">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			<h4 class="modal-title" ng-show="modalAction=='ADD'">Add Transition</h4>
+			<h4 class="modal-title" ng-show="modalAction=='EDIT'">Edit Transition</h4>
+		</div>
+		<div class="modal-body">
+			<input class="form-control" type="text" placeholder="input Product" ng-model="TransProd"/>
+			<input class="form-control" type="text" placeholder="input CE" ng-model="TransCE"/>
+			<input class="form-control" type="text" placeholder="input Abundance" ng-model="TransAbd"/>
+			<input class="form-control" type="text" placeholder="input R Intensity" ng-model="TransInt"/>
+		</div>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-default" ng-click="editTransition(editId)" ng-show="modalAction=='EDIT'">Submit changes</button>
+			<button type="button" class="btn btn-default" ng-click="addTransition()" ng-show="modalAction=='ADD'">Add</button>
+			<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+		</div>
+	</div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script>
+sys.q = [
+	{method: 'POST',url: 'request/compModuleCall.php',data: { section: 'getClass' }}
+];
+
+sys.ctrl = function($scope, $http) {
+	//if(sys.user == null) {$scope.go("/home");return;}
+	$scope.compTrans = [];
+	$scope.compName = "";
+	$scope.compFormula = "";
+	$scope.otherName = "";
+	$scope.compMass = "";
+	$scope.compfrag = "";
+	$scope.compRT = "";
+	$scope.compCAS = "";
+	$scope.compPrec = "";	
+	$scope.TransProd = "";
+	$scope.TransCE = "";
+	$scope.TransAbd = "";
+	$scope.TransInt = "";
+	$scope.modalAction = "";
+	$scope.editId = "";
+	$scope.selectedClass = "";
+
+	$scope.addTransition= function(){
+		$scope.compTrans.push({"cid":"","product":$scope.TransProd,"CE":$scope.TransCE,"Abd":$scope.TransAbd,"Intens":$scope.TransInt});
+		$('#maddTrans').modal('hide');
+	}
+
+	$scope.callEditTransitionModal= function(id){
+		$scope.TransProd = $scope.compTrans[id].product;
+		$scope.TransCE = $scope.compTrans[id].CE;
+		$scope.TransAbd = $scope.compTrans[id].Abd;
+		$scope.TransInt = 	$scope.compTrans[id].Intens;
+		$scope.modalAction = "EDIT";
+		$scope.editId = id;
+		$('#maddTrans').modal('show');
+	}
+	
+	$scope.editTransition = function(id){
+		$scope.compTrans[id] ={"cid":"","product":$scope.TransProd,"CE":$scope.TransCE,"Abd":$scope.TransAbd,"Intens":$scope.TransInt};
+		$('#maddTrans').modal('hide');
+	}
+	
+	$scope.deleteTransition= function(id){
+		$scope.compTrans.splice(id, 1);
+	}
+	
+	$scope.callADDTransitionModal= function(){
+		$scope.TransProd = "";
+		$scope.TransCE = "";
+		$scope.TransAbd = "";
+		$scope.TransInt = "";
+		$scope.modalAction = "ADD";
+		$('#maddTrans').modal('show');		
+	}	
+	
+	
+	//submit compound
+	$scope.submitComp = function(){
+		//add the compound itself
+		$http.post("request/compModuleCall.php",
+		{cName: $scope.compName,
+		cFormula: $scope.compFormula,
+		cOName: $scope.otherName,
+		cMass: $scope.compMass,
+		cPrecursor: $scope.compPrec,
+		cFrag: $scope.compfrag,
+		cRT: $scope.compRT,
+		cCAS: $scope.compCAS,
+		cClass : $scope.selectedClass.id,
+		section:"addComp",
+		Trans: $scope.compTrans})
+		.success(function(json) {
+			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+			else if(json["Code"] == 2000){
+				$('#mMessgTitle').text("Success.");		
+				$('#mMessgText').text("Compound has been added.");
+				$('#mMessg').modal('show');
+				$scope.go("/userCompound");
+				}else{
+				$('#mMessgTitle').text("Acction cannot be processed.");		
+				$('#mMessgText').text(json["CodeDetails"]);
+				$('#mMessg').modal('show');	
+			}
+		});		
+	}			
+}	
+</script>	

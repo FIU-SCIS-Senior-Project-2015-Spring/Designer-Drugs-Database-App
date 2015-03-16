@@ -12,15 +12,16 @@
 		<div class=" col-sm-6 ">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					Name: {{r[0].cName}}
+					Name: {{r[0].data[0].cName}}
 				</div>
 				<div class="panel-body">
-					<p>Formula: {{r[0].cFormula}}</p>
-					<p>Mass: {{r[0].cMass}}</p>
-					<p>Precursor: {{r[0].cPrecursor}}</p>
-					<p>Frag: {{r[0].cFrag}}</p>
-					<p>RT: {{r[0].cRT}}</p>
-					<p>CAS: {{r[0].cCas}}</p>
+					<p>Formula: {{r[0].data[0].cFormula}}</p>
+					<p>Mass: {{r[0].data[0].cMass}}</p>
+					<p>Precursor: {{r[0].data[0].cPrecursor}}</p>
+					<p>Frag: {{r[0].data[0].cFrag}}</p>
+					<p>RT: {{r[0].data[0].cRT}}</p>
+					<p>CAS: {{r[0].data[0].cCAS}}</p>
+					<p>Class: {{r[2].data[r[0].data[0].cClass].label}}</p>
 				</div>
 			</div>
 		</div>
@@ -47,7 +48,7 @@
 						<td>Abund.</td>
 						<td>R.Intens.</td>
 					  </tr>  
-					  <tr ng-repeat="items in r[1]">
+					  <tr ng-repeat="items in r[1].data">
 						<td>{{items.tProduct}}</td>
 						<td>{{items.tCE}}</td> 
 						<td>{{items.tAbundance}}</td>
@@ -62,7 +63,9 @@
 	
 <script>
 sys.q = [
-	{url:"request/searchResultOneDesc.php?cid=2"},
-	{url:"request/searchResultOneTrans.php?cid=2"}
+{method: 'POST',url: 'request/compModuleCall.php?nocache=2',data: { section: 'getCompbyId', id: sys.passVariable.cid}},
+{method: 'POST',url: 'request/compModuleCall.php?nocache=3',data: { section: 'getTrans', CompId: sys.passVariable.cid }},
+{method: 'POST',url: 'request/compModuleCall.php?nocache=1',data: { section: 'getClass' }}
 ];
+
 </script>	
