@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 03, 2015 at 01:36 AM
+-- Generation Time: Mar 16, 2015 at 03:48 AM
 -- Server version: 5.6.16
 -- PHP Version: 5.5.11
 
@@ -15,11 +15,6 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
-
-
-
-DROP DATABASE drugsdb;
-CREATE DATABASE drugsdb;
 
 --
 -- Database: `drugsdb`
@@ -35,14 +30,15 @@ CREATE TABLE IF NOT EXISTS `class` (
   `cid` int(11) NOT NULL AUTO_INCREMENT,
   `class` varchar(100) NOT NULL,
   PRIMARY KEY (`cid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
 
 --
 -- Dumping data for table `class`
 --
 
 INSERT INTO `class` (`cid`, `class`) VALUES
-(1, 'Test');
+(1, 'Test'),
+(2, 'Test51');
 
 -- --------------------------------------------------------
 
@@ -63,14 +59,31 @@ CREATE TABLE IF NOT EXISTS `compounds` (
   `cClass` int(11) NOT NULL,
   PRIMARY KEY (`cid`),
   KEY `cClass` (`cClass`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=23 ;
 
 --
 -- Dumping data for table `compounds`
 --
 
 INSERT INTO `compounds` (`cid`, `cName`, `cFormula`, `cOName`, `cMass`, `cPrecursor`, `cFrag`, `cRT`, `cCAS`, `cClass`) VALUES
-(2, 'test', 'test', 'test', 23, 23, 23, 23, 'test', 1);
+(2, 'test', 'test', 'test', 999, 23, 23, 2311, 'test11', 1),
+(4, 'lolo', 'lolo', 'lolo', 12, 12, 12, 12, '12', 2),
+(5, 'll', 'll', 'll', 1, 1, 1, 1, '1', 1),
+(6, 'll', 'll', 'll', 1, 1, 1, 1, '1', 1),
+(7, 'll', 'll', 'll', 1, 1, 1, 1, '1', 1),
+(8, 'll', 'll', 'll', 1, 1, 1, 1, '1', 1),
+(9, 'll', 'll', 'll', 1, 1, 1, 1, '1', 1),
+(10, 'll', 'll', 'll', 1, 1, 1, 1, '1', 1),
+(11, 'll', 'll', 'll', 1, 1, 1, 1, '1', 1),
+(12, 'l', 'l', 'l', 1, 1, 1, 1, '1', 2),
+(13, 'l', 'l', 'l', 1, 1, 1, 1, '1', 2),
+(14, '1', '1', '1', 1, 1, 1, 1, '1', 1),
+(15, '1', '1', '1', 1, 1, 1, 1, '1', 1),
+(16, '1', '1', '1', 1, 1, 1, 1, '1', 1),
+(17, '1', '1', '1', 1, 1, 1, 1, '1', 1),
+(18, '1', '1', '1', 1, 1, 1, 1, '1', 2),
+(19, '1', '1', '1', 1, 1, 1, 1, '1', 2),
+(22, 'myName', 'MyForm', 'MyOname', 1, 1234, 12, 123, '12345', 1);
 
 -- --------------------------------------------------------
 
@@ -108,7 +121,18 @@ CREATE TABLE IF NOT EXISTS `transition` (
   `tRIInt` double NOT NULL,
   PRIMARY KEY (`tid`),
   KEY `cid` (`cid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=14 ;
+
+--
+-- Dumping data for table `transition`
+--
+
+INSERT INTO `transition` (`tid`, `cid`, `tProduct`, `tCE`, `tAbundance`, `tRIInt`) VALUES
+(1, 2, 3, 22, 41, 50),
+(5, 19, 2, 4, 7, 2),
+(6, 2, 12, 12, 12, 12),
+(12, 22, 1, 2, 3, 4),
+(13, 22, 2, 3, 4, 5);
 
 -- --------------------------------------------------------
 
@@ -123,7 +147,7 @@ CREATE TABLE IF NOT EXISTS `userinvite` (
   PRIMARY KEY (`iid`),
   UNIQUE KEY `iemail` (`iemail`),
   UNIQUE KEY `iemail_2` (`iemail`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=12 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=13 ;
 
 --
 -- Dumping data for table `userinvite`
@@ -134,7 +158,8 @@ INSERT INTO `userinvite` (`iid`, `iemail`, `iexp`) VALUES
 (8, 'carlos.mrtez2002@gmail.com', '2015-02-24'),
 (9, 'test@gmail.com', '2015-02-25'),
 (10, 'test2@gmail.com', '2015-02-25'),
-(11, 'test3@gmail.com', '2015-02-25');
+(11, 'test3@gmail.com', '2015-02-25'),
+(12, 'carlos@fiu.edu', '2015-03-08');
 
 -- --------------------------------------------------------
 
@@ -157,7 +182,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 
 INSERT INTO `users` (`uid`, `uName`, `uEmail`, `uPass`, `uRole`) VALUES
-(2, 'Carlos', 'carlos@gmail.com', '0cbc6611f5540bd0809a388dc95a615b', 1),
+(2, 'Jose', 'carlos@gmail.com', '0cbc6611f5540bd0809a388dc95a615b', 1),
 (3, 'Carlos', 'Carlos@fiu.edu', '0cbc6611f5540bd0809a388dc95a615b', 2),
 (6, 'Jose', 'carlos.mrtez2002@gmail.com', '0cbc6611f5540bd0809a388dc95a615b', 2),
 (7, 'Test', 'test@gmail.com', '0cbc6611f5540bd0809a388dc95a615b', 2);
