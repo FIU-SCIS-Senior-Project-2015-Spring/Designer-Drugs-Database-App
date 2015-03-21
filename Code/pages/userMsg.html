@@ -8,9 +8,13 @@
 			<div class="panel-heading">Account Messages	</div>
 			<div class="panel-body">
 				<div class="list-group">
-				  <a href="#" ng-Click="accnt_One_msg(items.emailNo)" class="list-group-item" ng-repeat="items in msgs">
-					<h4 class="list-group-item-heading">From: {{items.from}}</h4>
-					<p class="list-group-item-text">Subject: {{items.subject}}</p>
+				  <a href="#userMsg" ng-Click="seeMessage($index)" class="list-group-item" ng-repeat="items in r[0].data" ng-show="items.mread == 1">
+					<h4 class="list-group-item-heading">From: {{items.mfrom}}</h4>
+					<p class="list-group-item-text">Subject: {{items.msubject}}</p>
+				  </a>
+				  <a href="#userMsg" ng-Click="seeMessage($index)" class="list-group-item list-group-item-info" ng-repeat="items in r[0].data" ng-show="items.mread == 0">
+					<h4 class="list-group-item-heading">From: {{items.mfrom}}</h4>
+					<p class="list-group-item-text">Subject: {{items.msubject}}</p>
 				  </a>
 				</div>
 			</div>
@@ -18,8 +22,169 @@
 	</div>
 </div>
 
+<!--modify transition-->
+<div class="modal" id="mseeMsg">
+  <div class="modal-dialog">
+	<div class="modal-content">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			<h4 class="modal-title">Contact Message</h4>
+		</div>
+		<div class="modal-body">
+			<div class="alert alert-info" role="alert" id="mmsgFrom">From: </div>
+			<div class="alert alert-info" role="alert" id="mmsgTitle">Title: </div>
+			<div class="alert alert-info" role="alert" id="mmsgMsg">Message: </div>
+		</div>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-default" ng-Click="clickDelete()">Delete</button>
+			<button type="button" class="btn btn-default" ng-Click="clickReply()">Reply</button>
+			<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+		</div>
+	</div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!--modify transition-->
+<div class="modal" id="mreplyMsg">
+  <div class="modal-dialog">
+	<div class="modal-content">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			<h4 class="modal-title">Contact Message</h4>
+		</div>
+		<div class="modal-body">
+			<div class="form-group">
+				<input type="text" class="form-control disabled" disabled ng-model="mumsgfrom">
+			</div>
+			<div class="form-group">
+				<input type="text" class="form-control disabled" disabled ng-model="mumsgto">
+			</div>
+			<div class="form-group">
+				<input type="text" class="form-control disabled" disabled ng-model="mumsgSubject">
+			</div>
+			<div class="form-group">
+				<textarea class="form-control" ng-model="mumsgText" placeholder="Enter your reply"></textarea>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-default" ng-Click="sendReplyandDelete()">Send Reply and Delete</button>
+			<button type="button" class="btn btn-default" ng-Click="sendReply()">Send Reply</button>
+			<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+		</div>
+	</div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 <script>
+sys.q = [
+{method: 'POST',url: 'request/msgModuleCall.php?nocache=1',data: { section: 'getMsg' }}
+];
+
 sys.ctrl = function($scope, $http) {
-	//if(sys.user == null) $scope.go("/home");
+	$scope.checkUserData();
+	$scope.index=0;
+	$scope.mumsgfrom ="";
+	$scope.mumsgto ="";
+	$scope.mumsgSubject ="";
+	$scope.mumsgText ="";
+
+	$scope.seeMessage = function(index){
+		$scope.index = index;
+		if($scope.r[0].data[index].mread == 0){
+			$http.post("request/msgModuleCall.php",
+			{section:"modMsg",
+			mid: $scope.r[0].data[index].mid})
+			.success(function(json) {
+				if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+				else if(json["Code"] == 2000){
+					$scope.r[0].data[index].mread = 1;
+					$('#mmsgFrom').text("Title: "+$scope.r[0].data[index].mfrom);
+					$('#mmsgTitle').text("Title: "+$scope.r[0].data[index].msubject);		
+					$('#mmsgMsg').text("Message: "+$scope.r[0].data[index].mtext);
+					$('#mseeMsg').modal('show');
+				}else{
+					$('#mMessgTitle').text("Acction cannot be processed.");		
+					$('#mMessgText').text(json["CodeDetails"]);
+					$('#mMessg').modal('show');	
+				}
+			});
+		}else{
+			$('#mmsgFrom').text("Title: "+$scope.r[0].data[index].mfrom);
+			$('#mmsgTitle').text("Title: "+$scope.r[0].data[index].msubject);		
+			$('#mmsgMsg').text("Message: "+$scope.r[0].data[index].mtext);
+			$('#mseeMsg').modal('show');			
+		}
+	}
+	
+	$scope.clickDelete = function(){
+		$http.post("request/msgModuleCall.php",
+		{section:"deleteMsg",
+		mid: $scope.r[0].data[$scope.index].mid})
+		.success(function(json) {
+			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+			else if(json["Code"] == 2000){
+				$scope.r[0].data.splice($scope.index, 1);
+				$('#mseeMsg').modal('hide');	
+				$('#mMessgTitle').text("Success");		
+				$('#mMessgText').text("Message deleted.");
+				$('#mMessg').modal('show');	
+			}else{
+				$('#mMessgTitle').text("Acction cannot be processed.");		
+				$('#mMessgText').text(json["CodeDetails"]);
+				$('#mMessg').modal('show');	
+			}
+		});
+	}
+
+	$scope.clickReply = function(){
+		$('#mseeMsg').modal('hide');	
+		$scope.mumsgfrom ="Designer Drug Database";
+		$scope.mumsgto =$scope.r[0].data[$scope.index].mfrom;
+		$scope.mumsgSubject ="RE: "+$scope.r[0].data[$scope.index].msubject;
+		$scope.mumsgText ="";
+		$('#mreplyMsg').modal('show');	
+	}
+	
+	$scope.sendReply = function(){
+		$http.post("request/msgModuleCall.php",
+		{section:"newReply",
+		from: $scope.mumsgfrom,
+		to: $scope.mumsgto,
+		subject: $scope.mumsgSubject,
+		text: $scope.mumsgText})
+		.success(function(json) {
+			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+			else if(json["Code"] == 2000){
+				$('#mreplyMsg').modal('hide');	
+				$('#mMessgTitle').text("Success");		
+				$('#mMessgText').text("Message sent.");
+				$('#mMessg').modal('show');	
+			}else{
+				$('#mMessgTitle').text("Acction cannot be processed.");		
+				$('#mMessgText').text(json["CodeDetails"]);
+				$('#mMessg').modal('show');	
+			}
+		});		
+	}
+	
+	$scope.sendReplyandDelete = function(){
+		$http.post("request/msgModuleCall.php",
+		{section:"newReply",
+		from: $scope.mumsgfrom,
+		to: $scope.mumsgto,
+		subject: $scope.mumsgSubject,
+		text: $scope.mumsgText})
+		.success(function(json) {
+			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+			else if(json["Code"] == 2000){
+				$('#mreplyMsg').modal('hide');
+				$scope.clickDelete();
+			}else{
+				$('#mMessgTitle').text("Acction cannot be processed.");		
+				$('#mMessgText').text(json["CodeDetails"]);
+				$('#mMessg').modal('show');	
+			}
+		});	
+	}
 }
 </script>

@@ -1,12 +1,12 @@
 <!-- Contact Us Good -->
-	<div class="container col-md-6 col-md-offset-3" id="contactUs" ng-controller="ControllerContactUs">
+	<div class="container col-md-6 col-md-offset-3">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
 				<h3 class="panel-title">Contact Us</h3>
 			</div>
 			<div class="panel-body">
 			  <div class="form-group">
-				<input type="text" class="form-control" ng-model="msgFrom" placeholder="Enter your email">
+				<input type="text" class="form-control" ng-model="from" placeholder="Enter your email">
 			  </div>
 			  <div class="form-group">
 				<input type="text" class="form-control" ng-model="msgSubject" placeholder="Subject">
@@ -14,8 +14,42 @@
 			  <div class="form-group">
 				<textarea class="form-control" ng-model="msgComment" rows="8"  placeholder="Describe your enquiry"></textarea>
 			  </div>
-			  <hr>
-			  <a href="#" ng-click="clicksendMsg()" class="btn btn-primary btn-block">Submit</a>
+			</div>
+			<div class="panel-footer">
+			  <button type="button" class="btn btn-info" ng-click="sendMessage()">Submit</button>
 			</div>
 		</div>
 	</div>
+	
+<script>
+sys.ctrl = function($scope, $http) {
+	$scope.from = "";
+	$scope.to = "admin";
+	$scope.msgSubject = "";
+	$scope.msgComment = "";
+	
+	$scope.sendMessage= function(){
+		$http.post("request/msgModuleCall.php",
+		{section:"newMsg",
+		from: $scope.from,
+		to: $scope.to,
+		subject: $scope.msgSubject,
+		text: $scope.msgComment})
+		.success(function(json) {
+			if(json["Code"] == 2000){
+				$('#mMessgTitle').text("Success");		
+				$('#mMessgText').text("Message sent.");
+				$('#mMessg').modal('show');	
+				$scope.from = "";
+				$scope.to = "admin";
+				$scope.msgSubject = "";
+				$scope.msgComment = "";
+				}else{
+				$('#mMessgTitle').text("Acction cannot be processed.");		
+				$('#mMessgText').text(json["CodeDetails"]);
+				$('#mMessg').modal('show');	
+			}
+		});
+	}
+}
+</script>

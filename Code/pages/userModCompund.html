@@ -4,13 +4,20 @@
 		<div ng-include="'pages/userMenu.html'"></div>
 	</div>
 	<div class="col-lg-7" id="userMainDtail">
+
 		<div class="panel panel-primary">
-			<div class="panel-heading">Add Compound</div>
+			<div class="panel-heading">Modify Compound</div>
+			<div class="panel-body">
+				<input type="file" ng-file-select="onFileSelect($files)" accept="image/*">
+				<img ng-show="!dataFiles.length" ng-src="img/{{r[1].data[0].cFormula}}.jpg" class="img-thumbnail" width="120px">
+				<img ng-show="dataFiles.length" ng-src="{{dataFiles[0]}}" class="img-thumbnail" width="120px">
+			</div>
+		</div>
+
+		<div class="panel panel-primary">
+			<div class="panel-heading">Compound Data</div>
 			<div class="panel-body">
 				<div class="form-group">
-					<div>
-						<input type="file" ng-file-select="onFileSelect($files)" accept="image/*">
-					</div>
 					<input class="form-control" type="text" placeholder="input Name" ng-model="r[1].data[0].cName"/>
 					<input class="form-control" type="text" placeholder="input Formula" ng-model="r[1].data[0].cFormula"/>
 					<input class="form-control" type="text" placeholder="input Other Name" ng-model="r[1].data[0].cOName"/>
@@ -19,7 +26,7 @@
 					<input class="form-control" type="text" placeholder="input Retention time" ng-model="r[1].data[0].cRT"/>
 					<input class="form-control" type="text" placeholder="input Precursor" ng-model="r[1].data[0].cPrecursor"/>
 					<input class="form-control" type="text" placeholder="input CAS" ng-model="r[1].data[0].cCAS"/>
-					<select ng-model="r[1].data[0].cClass" class="form-control" ng-options="item.label for item in r[0].data track by item.id"></select>
+					<select id="selectedClass" ng-model="selectedClass" ng-init="selectedClass = {id : r[0].data[0].id}" class="form-control" ng-options="item.label for item in r[0].data track by item.id"></select>
 				</div>
 			</div>
 			<div class="panel-footer">
@@ -85,20 +92,67 @@
 
 sys.q = [
 {method: 'POST',url: 'request/compModuleCall.php?nocache=1',data: { section: 'getClass' }},
-{method: 'POST',url: 'request/compModuleCall.php?nocache=2',data: { section: 'getCompbyId', id: sys.passVariable.cid}},
-{method: 'POST',url: 'request/compModuleCall.php?nocache=3',data: { section: 'getTrans', CompId: sys.passVariable.cid }}
+{method: 'POST',url: 'request/compModuleCall.php?nocache=2',data: { section: 'getCompbyId', id: sys.params.itemId}},
+{method: 'POST',url: 'request/compModuleCall.php?nocache=3',data: { section: 'getTrans', CompId: sys.params.itemId }}
 ];
 
 
 sys.ctrl = function($scope, $http) {
-	//if(sys.user == null) $scope.go("/home");
+	$scope.checkUserData();
 	
-//	$scope.selectedClass="";
+	$scope.selectedClass=0;
 	$scope.modalAction = "";
 	$scope.TransProd = "";
 	$scope.TransCE = "";
 	$scope.TransAbd = "";
 	$scope.TransInt = "";
+	$scope.listFiles = [];
+	$scope.dataFiles = [];
+	$timeout = $scope.timeout;
+	
+	$scope.onFileSelect = function($files) {    
+			if  ($files[0].type.match('image')) {
+				var $file = $files[0];
+				$scope.listFiles.push($file);
+				if ( window.FileReader != null && (window.FileAPI == null || FileAPI.html5 != false) ) {
+					var fileReader = new FileReader();
+					fileReader.onloadend = function(e) {
+						$timeout(function() {
+							$scope.dataFiles[0] = e.target.result;
+						});
+					}
+					fileReader.readAsDataURL($file);
+				}
+			}
+			else
+			{
+				//ERROR: Solo se aceptan imagenes
+			}
+	};
+	
+	
+	$scope.uploadPic = function(){
+		//console.log('hhhh');
+		if($scope.listFiles.length > 0 && $scope.dataFiles.length > 0){
+			var formData = new FormData();
+			// Append all the data
+			//formData.append("name", $scope.name);
+			//Append files
+			for (var i=0; i < $scope.listFiles.length; i++)
+				formData.append('files[]', $scope.listFiles[i]);
+			
+			$.ajax({
+				url: "request/request_importPics.php",
+				type: "POST",
+				data: formData,
+				processData: false,  // tell jQuery not to process the data
+				contentType: false,   // tell jQuery not to set contentType
+				transformRequest: angular.identity
+			}).done(function(json, status, headers, config) {
+				if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+			});	
+		}
+	}
 	
 	$scope.callEditTransitionModal= function(id){
 		$scope.TransProd = $scope.r[2].data[id].tProduct;
@@ -130,12 +184,13 @@ sys.ctrl = function($scope, $http) {
 		cFrag: $scope.r[1].data[0].cFrag,
 		cRT: $scope.r[1].data[0].cRT,
 		cCAS: $scope.r[1].data[0].cCAS,
-		cClass : $scope.r[1].data[0].cClass,
+		cClass : $scope.selectedClass.id,//$scope.r[1].data[0].cClass,
 		cid : $scope.r[1].data[0].cid,
 		section:"editComp"})
 		.success(function(json) {
 			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
 			else if(json["Code"] == 2000){
+				$scope.uploadPic();
 				$('#mMessgTitle').text("Success.");		
 				$('#mMessgText').text("Compound has been updated.");
 				$('#mMessg').modal('show');
@@ -149,8 +204,8 @@ sys.ctrl = function($scope, $http) {
 	}	
 	
 	$scope.deleteCompound = function(){
-		$http.post("request/compModuleCall.php",
-		{section:"deleteComp",
+		$http.post("request/request/authModuleCall.php",
+		{section:"testSesionInfo",
 		cid: $scope.r[1].data[0].cid})
 		.success(function(json) {
 			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
@@ -158,14 +213,12 @@ sys.ctrl = function($scope, $http) {
 				$('#mMessgTitle').text("Success.");		
 				$('#mMessgText').text("Transition deleted.");
 				$('#mMessg').modal('show');
-				$scope.go("/userCompound");
 				}else{
 				$('#mMessgTitle').text("Acction cannot be processed.");		
 				$('#mMessgText').text(json["CodeDetails"]);
 				$('#mMessg').modal('show');	
 			}
 		});
-	 
 	}
 	
 	$scope.deleteTransition = function(transId){

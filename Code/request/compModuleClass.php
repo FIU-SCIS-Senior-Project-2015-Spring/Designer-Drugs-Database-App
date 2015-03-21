@@ -31,7 +31,7 @@
 		{
 			$this->checkVariableNotEmpty($this->requests["section"], "Section");
 			//check if user has admin permission to continue unless requesting its own data
-			if($this->requests["section"] != "getComp" && $this->requests["section"] != "getClass"&& $this->requests["section"] != "getPrec") {
+			if($this->requests["section"] != "getComp" &&$this->requests["section"] != "getCompbyId" && $this->requests["section"] != "getClass"&& $this->requests["section"] != "getPrec"&& $this->requests["section"] != "expComp") {
 					//load authModule class
 					include("authModuleClass.php");	
 
@@ -47,7 +47,7 @@
 										
 					$this->checkVariableNotEmpty($this->result["loggedUser"], "login information");
 				
-				if ((!isset($this->result["loggedUser"]["permission"]))||($this->result["loggedUser"]["permission"] != "admin")) {					
+				if (!isset($this->result["loggedUser"]["permission"])) {					
 					$this->result["Code"] = 1005; 
 					$this->result["CodeDetails"] = "user has no permission for this module";
 					$this->returnJson($this->result);
@@ -57,39 +57,42 @@
 			//section controller
 		
 			switch ($this->requests["section"]) {
-			case 'getComp':		$this->userRequestType = "SELECT"; $this->getComp(); 				
+			case 'getComp':		$this->getComp(); 				
 				break;
-			case 'getCompbyId':	$this->userRequestType = "SELECT"; $this->getCompbyId(); 				
+			case 'getCompbyId':	$this->getCompbyId(); 				
 				break;
-			case 'addComp':		$this->userRequestType = "INSERT"; $this->addComp(); 	
+			case 'addComp':		$this->addComp(); 	
 				break;
-			case 'editComp':	$this->userRequestType = "UPDATE"; $this->editComp();	
+			case 'editComp':	$this->editComp();	
 				break;
-			case 'deleteComp':	$this->userRequestType = "DELETE"; $this->deleteComp();	
+			case 'deleteComp':	$this->deleteComp();	
 				break;				
-			case 'impComp':		$this->userRequestType = "INSERT"; $this->impComp();	
+			case 'impPics':		$this->impPics();	
 				break;
-			case 'expComp':		$this->userRequestType = "SELECT"; $this->expComp();	
+			case 'impComp':		$this->impComp();	
 				break;
-			case 'getClass':	$this->userRequestType = "SELECT"; $this->getClass(); 				
+			case 'expComp':		$this->expComp();	
 				break;
-			case 'getClassCount':	$this->userRequestType = "SELECT"; $this->getClassCount(); 				
+			case 'getClass':	$this->getClass(); 				
 				break;
-			case 'addClass':	$this->userRequestType = "INSERT"; $this->addClass(); 	
+			case 'getClassCount':	$this->getClassCount(); 				
 				break;
-			case 'editClass':	$this->userRequestType = "UPDATE"; $this->editClass();	
+			case 'addClass':	$this->addClass(); 	
 				break;
-			case 'deleteClass':	$this->userRequestType = "DELETE"; $this->deleteClass();	
+			case 'editClass':	$this->editClass();	
+				break;
+			case 'deleteClass':	$this->deleteClass();	
 				break;				
-			case 'getTrans':	$this->userRequestType = "SELECT"; $this->getTrans(); 				
+			case 'getTrans':	$this->getTrans(); 				
 				break;
-			case 'addTrans':	$this->userRequestType = "INSERT"; $this->addTrans($this->requests["Trans"][0]["cid"]); 	
+			case 'addTrans':	$this->addTrans(); 	
 				break;
-			case 'editTrans':	$this->userRequestType = "UPDATE"; $this->editTrans();	
+			case 'editTrans':	$this->editTrans();	
 				break;
-			case 'deleteTrans':	$this->userRequestType = "DELETE"; $this->deleteTrans();	
+			case 'deleteTrans':	$this->deleteTrans();	
 				break;				
-				
+			case 'countComp':	$this->countComp();	
+				break;					
 			default:
 			   $this->result["Code"] = 1002;
 			   $this->result["CodeDetails"] = "wrong section";
@@ -101,6 +104,7 @@
 		private function getComp()
 		{
 			$this->checkVariableNotEmpty($this->requests["searchCriteria"], "Search criteria");
+			$this->userRequestType = "SELECT"; 
 			//sql need it
 			$this->sql = "SELECT * FROM compounds WHERE compounds.cName= ? OR compounds.cFormula=? OR compounds.cOName = ?";
 			$this->arrayOfRequest[0] = $this->requests["searchCriteria"];
@@ -109,9 +113,21 @@
 			$this->requestDatabase(false);
 		}
 		
+		private function countComp()
+		{
+			$this->checkisAdminOrLabOP();
+			$this->userRequestType = "SELECT";
+			
+			$this->sql = "SELECT COUNT(*) AS compCount FROM compounds";
+			$temp = $this->requestDatabase(true);
+			$this->result["data"]["compCount"] = $temp[0]["compCount"];
+			$this->returnJson($this->result);
+		}
+		
 		private function getCompbyId()
 		{
 			$this->checkVariableNotEmpty($this->requests["id"], "id");
+			$this->userRequestType = "SELECT"; 
 			//sql need it
 			$this->sql = "SELECT * FROM compounds WHERE compounds.cid= ?";
 			$this->arrayOfRequest[0] = $this->requests["id"];
@@ -120,18 +136,11 @@
 		
 		private function addComp()
 		{
+			$this->checkisAdminOrLabOP();
+			$this->userRequestType = "INSERT";
 			//sql need it
 			$this->sql = "INSERT INTO compounds (`cName`, `cFormula`, `cOName`, `cMass`, `cPrecursor`, `cFrag`, `cRT`, `cCAS`, `cClass`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-			$this->arrayOfRequest[0] = $this->requests["cName"];
-			$this->arrayOfRequest[1] = $this->requests["cFormula"];
-			$this->arrayOfRequest[2] = $this->requests["cOName"];
-			$this->arrayOfRequest[3] = $this->requests["cMass"];
-			$this->arrayOfRequest[4] = $this->requests["cPrecursor"];
-			$this->arrayOfRequest[5] = $this->requests["cFrag"];
-			$this->arrayOfRequest[6] = $this->requests["cRT"];
-			$this->arrayOfRequest[7] = $this->requests["cCAS"];
-			$this->arrayOfRequest[8] = $this->requests["cClass"];
-			
+
 			$this->checkVariableNotEmpty($this->requests["cName"], "Name");
 			$this->checkVariableNotEmpty($this->requests["cFormula"], "Formula");
 			$this->checkVariableNotEmpty($this->requests["cOName"], "Other Names");
@@ -142,14 +151,38 @@
 			$this->checkVariableNotEmpty($this->requests["cCAS"], "CAS");
 			$this->checkVariableNotEmpty($this->requests["cClass"], "Class");
 
-			$this->addTrans($this->requestDatabase(true));
+			$this->arrayOfRequest[0] = $this->requests["cName"];
+			$this->arrayOfRequest[1] = $this->requests["cFormula"];
+			$this->arrayOfRequest[2] = $this->requests["cOName"];
+			$this->arrayOfRequest[3] = $this->requests["cMass"];
+			$this->arrayOfRequest[4] = $this->requests["cPrecursor"];
+			$this->arrayOfRequest[5] = $this->requests["cFrag"];
+			$this->arrayOfRequest[6] = $this->requests["cRT"];
+			$this->arrayOfRequest[7] = $this->requests["cCAS"];
+			$this->arrayOfRequest[8] = $this->requests["cClass"];
+
+			$this->addTranswithCompID($this->requestDatabase(true));
 		}		
 
 		//better if it is split into different catefories, one per each item to be changed
 		private function editComp()
 		{
-						//sql need it
+			$this->checkisAdminOrLabOP();
+			$this->userRequestType = "UPDATE";
+			//sql need it
 			$this->sql = "UPDATE compounds SET cName=?, cFormula=?, cOName=?, cMass=?, cPrecursor=?, cFrag=?, cRT=?, cCAS=?, cClass=? WHERE compounds.cid = ?";
+
+			$this->checkVariableNotEmpty($this->requests["cName"], "Name");
+			$this->checkVariableNotEmpty($this->requests["cFormula"], "Formula");
+			$this->checkVariableNotEmpty($this->requests["cOName"], "Other Names");
+			$this->checkVariableNotEmpty($this->requests["cMass"], "Mass");
+			$this->checkVariableNotEmpty($this->requests["cFrag"], "Frag");
+			$this->checkVariableNotEmpty($this->requests["cRT"], "RT");
+			$this->checkVariableNotEmpty($this->requests["cPrecursor"], "Precursor");
+			$this->checkVariableNotEmpty($this->requests["cCAS"], "CAS");
+			$this->checkVariableNotEmpty($this->requests["cClass"], "Class");
+			$this->checkVariableNotEmpty($this->requests["cid"], "Compound Id");
+			
 			$this->arrayOfRequest[0] = $this->requests["cName"];
 			$this->arrayOfRequest[1] = $this->requests["cFormula"];
 			$this->arrayOfRequest[2] = $this->requests["cOName"];
@@ -161,22 +194,15 @@
 			$this->arrayOfRequest[8] = $this->requests["cClass"];
 			$this->arrayOfRequest[9] = $this->requests["cid"];
 			
-			$this->checkVariableNotEmpty($this->requests["cName"], "Name");
-			$this->checkVariableNotEmpty($this->requests["cFormula"], "Formula");
-			$this->checkVariableNotEmpty($this->requests["cOName"], "Other Names");
-			$this->checkVariableNotEmpty($this->requests["cMass"], "Mass");
-			$this->checkVariableNotEmpty($this->requests["cFrag"], "Frag");
-			$this->checkVariableNotEmpty($this->requests["cRT"], "RT");
-			$this->checkVariableNotEmpty($this->requests["cPrecursor"], "Precursor");
-			$this->checkVariableNotEmpty($this->requests["cCAS"], "CAS");
-			$this->checkVariableNotEmpty($this->requests["cClass"], "Class");
-			$this->checkVariableNotEmpty($this->requests["cid"], "Compound Id");
 			$this->requestDatabase(false);
 		}	
 
 		private function deleteComp()
 		{
+			$this->checkisAdminOrLabOP();
 			$this->checkVariableNotEmpty($this->requests["cid"], "Compound id");
+			$this->userRequestType = "DELETE";
+			
 			$this->arrayOfRequest[0] = $this->requests["cid"];
 			$this->sql = "DELETE FROM transition WHERE transition.cid = ?";
 			$this->requestDatabase(true);
@@ -184,22 +210,155 @@
 			$this->requestDatabase(false);
 		}	
 
+		
+////////////IMPORT COMPOUND///////////		
 		private function impComp()
 		{
-		}	
+			$this->checkisAdmin();
+			$this->userRequestType = "INSERT";
+			
+			$dbAddress = $this->dbConfig["Address"];
+			$dbName = $this->dbConfig["Name"];
+			$dbUser = $this->dbConfig["User"];
+			$dbPassword = $this->dbConfig["Password"];
+			
+			$db = new PDO("mysql:host=$dbAddress;dbname=$dbName", $dbUser, $dbPassword);
 
+			$fileUpl = $_FILES["file"];
+			//$fileUpl = $this->requests["file"];
+			
+			if ( !$fileUpl["error"] ) 
+			{
+				$file = fopen($fileUpl["tmp_name"], "r");
+			}
+			else 
+			{
+				die("No file");
+			}
+
+			//Prepared statements for class
+			$psClassCheck = $db->prepare("SELECT cid FROM class WHERE class=:class");
+			$psClassInsert = $db->prepare("INSERT INTO class (class) VALUES (:class)");
+			//Prepared statements for compounds
+			$psCompoundsCheck = $db->prepare("SELECT cid FROM compounds WHERE cFormula=:cFormula");
+			$psCompoundsInsert = $db->prepare("INSERT INTO compounds (cName, cFormula, cOName, cMass, cPrecursor, cFrag, cRT, cCAS, cClass) 
+															VALUES (:cName, :cFormula, :cOName, :cMass, :cPrecursor, :cFrag, :cRT, :cCAS, :cClass)");
+			//Prepared statements for transition
+			$psTransitionInsert = $db->prepare("INSERT INTO transition (cid, tProduct, tCE, tAbundance, tRIInt) 
+												VALUES (:cid, :tProduct, :tCE, :tAbundance, :tRIInt)");
+
+			$compound = array();
+			$cFormula = '';
+			$cExisted = array();  // List of compounds that already exist and can not be insert
+			$compound = fgetcsv($file); //First row with the titles
+			$compoundExisted = true;
+			while( !feof($file) )
+			  {
+				$compound = fgetcsv($file);
+				if ( ($compound[3]!='') && ($cFormula != $compound[3]) )
+				{
+					// New Compound
+					$cFormula = $compound[3];
+					//Check if already exist this compound
+					$psCompoundsCheck->bindParam(':cFormula', $compound[3]);
+					$psCompoundsCheck->execute();
+					$cid = $psCompoundsCheck->fetch();
+					if ( !empty($cid) )
+					{
+						//Already exist
+						array_push($cExisted, $compound[3]);
+						$compoundExisted = true;
+					}
+					else
+					{
+						$compoundExisted = false;
+						//Check id exist the "class", else insert class and take id
+						if ( $compound[2] != '')
+						{
+							$psClassCheck->bindParam(':class', $compound[2]);
+							$psClassCheck->execute();
+							$cClass = $psClassCheck->fetchColumn(0);
+							if (empty($cClass))
+							{
+								//Insert
+								$psClassInsert->bindParam(':class', $compound[2]);
+								$psClassInsert->execute();
+								$cClass = $db->lastInsertId();
+							}
+						}
+						//Insert in table "compounds" 
+						$psCompoundsInsert->execute(array(':cName'=>$compound[1], ':cFormula'=>$compound[3], ':cOName'=>$compound[0], ':cMass'=>$compound[4],
+															':cPrecursor'=>$compound[5], ':cFrag'=>$compound[8], ':cRT'=>$compound[12], ':cCAS'=>$compound[13], ':cClass'=>$cClass));
+						$cId = $db->lastInsertId();
+					}
+				}
+				if ( ($compound[3]!='') && (!$compoundExisted) )
+				{
+					//Insert in table Transition
+					$psTransitionInsert->execute(array(':cid'=>$cId, ':tProduct'=>$compound[6], ':tCE'=>$compound[9], ':tAbundance'=>$compound[10], ':tRIInt'=>$compound[11]));
+				}
+			  }
+			fclose($file);
+
+			//Output
+			echo json_encode($cExisted);
+		}	
+		
+		private function impPics()
+		{
+			$this->checkisAdmin();
+			
+			$destination = '../img';
+
+			$vector = $_FILES["files"];
+			
+			$result = array(); 
+			foreach($vector as $key1 => $value1) 
+				foreach($value1 as $key2 => $value2) 
+					$result[$key2][$key1] = $value2; 
+			$files =  $result;
+
+			foreach ($files as $file) {
+				if (!$file["error"]) {
+					$tmp_name = $file["tmp_name"];
+					$name = $file["name"];
+					move_uploaded_file($tmp_name, "$destination/$name");
+					//fopen('../img/index2.jpg', 'r');
+				}
+			}
+			
+			$this->returnJson($this->result);
+		}
+		
 		private function expComp()
 		{
+			$this->checkVariableNotEmpty($this->requests["cClass"], "Class");
+			$this->userRequestType = "SELECT";
+			
+			$this->sql = "SELECT cOName, cName, class.class, cFormula, cMass, cPrecursor, tProduct, tid, cFrag, tCE, tAbundance, tRIInt, cRT, cCAS
+                            FROM class
+                            LEFT JOIN compounds ON ( compounds.cClass=class.cid )
+                            LEFT JOIN transition ON ( transition.cid=compounds.cid )
+                            WHERE class.cid=?";
+			$this->arrayOfRequest[0] = $this->requests["cClass"];
+			$result = $this->requestDatabase(true);
+			
+			$title = array('Other Names','Compound Name','Compound Class','Formula','Mass','Precursor','Product','No. of Transitions','Frag','CE','Abundance','Relative Ion Intensity','RT (Zorbax)','CAS');
+			$result = $this->returnCSV($result,$title);
 		}	
 
 		private function getClass()
 		{
+			$this->userRequestType = "SELECT";
 			$this->sql = "SELECT cid AS id, class AS label FROM class";
 			$this->requestDatabase(false);
 		}
 
 		private function getClassCount()
 		{
+			$this->checkisAdminOrLabOP();
+			$this->userRequestType = "SELECT";
+			
 			$this->checkVariableNotEmpty($this->requests["cClass"], "Class");
 			$this->sql = "SELECT COUNT(*) AS count FROM compounds WHERE compounds.cClass = ?";
 			$this->arrayOfRequest[0] = $this->requests["cClass"];
@@ -208,7 +367,10 @@
 
 		private function addClass()
 		{
+			$this->checkisAdminOrLabOP();			
 			$this->checkVariableNotEmpty($this->requests["cClass"], "Class");
+			$this->userRequestType = "INSERT";
+			
 			$this->sql = "INSERT INTO class ( `class`) VALUES (?)";
 			$this->arrayOfRequest[0] = $this->requests["cClass"];
 			$this->requestDatabase(false);
@@ -216,8 +378,11 @@
 
 		private function editClass()
 		{
+			$this->checkisAdminOrLabOP();
 			$this->checkVariableNotEmpty($this->requests["cClass"], "Class");
 			$this->checkVariableNotEmpty($this->requests["cid"], "Class id");
+			$this->userRequestType = "UPDATE";
+			
 			$this->sql = "UPDATE class SET class=? WHERE class.cid = ?";
 			$this->arrayOfRequest[0] = $this->requests["cClass"];
 			$this->arrayOfRequest[1] = $this->requests["cid"];
@@ -226,7 +391,10 @@
 
 		private function deleteClass()
 		{
-			$this->checkVariableNotEmpty($this->requests["cid"], "Class id");			
+			$this->checkisAdminOrLabOP();
+			$this->checkVariableNotEmpty($this->requests["cid"], "Class id");	
+			$this->userRequestType = "DELETE"; 
+			
 			$this->sql = "DELETE FROM class WHERE class.cid = ?";
 			$this->arrayOfRequest[0] = $this->requests["cid"];			
 			$this->requestDatabase(false);
@@ -235,14 +403,22 @@
 		private function getTrans()
 		{
 			$this->checkVariableNotEmpty($this->requests["CompId"], "Compound id");
+			$this->userRequestType = "SELECT"; 
 			//sql need it
 			$this->sql = "SELECT * FROM transition WHERE transition.cid= ?";
 			$this->arrayOfRequest[0] = $this->requests["CompId"];
 			$this->requestDatabase(false);			
 		}		
 
-		private function addTrans($cid)
+		private function addTrans()
 		{
+			$this->checkVariableNotEmpty($this->requests["Trans"][0]["cid"], "Compound id");
+			$this->addTranswithCompID($this->requests["Trans"][0]["cid"]);
+		}
+		
+		private function addTranswithCompID($cid)
+		{
+			$this->checkisAdminOrLabOP();
 			$this->userRequestType == "INSERT";
 			//sql need it
 			$this->sql = "INSERT INTO transition ( `cid`, `tProduct`, `tCE`, `tAbundance`, `tRIInt`) VALUES (?, ?, ?, ?, ?)";
@@ -271,11 +447,13 @@
 
 		private function editTrans()
 		{
+			$this->checkisAdminOrLabOP();
 			$this->checkVariableNotEmpty($this->requests["Transid"], "Id of transition ");
 			$this->checkVariableNotEmpty($this->requests["product"], "Product ");
 			$this->checkVariableNotEmpty($this->requests["CE"], "CE ");
 			$this->checkVariableNotEmpty($this->requests["Abd"], "Abundance ");
 			$this->checkVariableNotEmpty($this->requests["Intens"], "Intensity ");
+			$this->userRequestType = "UPDATE";
 
 			$this->sql = "UPDATE transition SET tProduct=?, tCE=?, tAbundance=?, tRIInt=? WHERE transition.tid = ?";
 
@@ -289,7 +467,10 @@
 
 		private function deleteTrans()
 		{
+			$this->checkisAdminOrLabOP();
 			$this->checkVariableNotEmpty($this->requests["Transid"], "Id of transition ");
+			$this->userRequestType = "DELETE"; 
+			
 			$this->sql = "DELETE FROM transition WHERE transition.tid = ?";
 			$this->arrayOfRequest[0] = $this->requests["Transid"];
 			$this->requestDatabase(false);			
@@ -323,6 +504,28 @@
 			}
 		}
 
+
+		private function checkisAdmin()
+		{
+			if(($this->result["loggedUser"]["permission"] != "admin")){
+				$this->result["Code"] = 1005; 
+				$this->result["CodeDetails"] = "user has no permission for this module";
+				$this->returnJson($this->result);
+				exit;
+			}
+		}
+
+
+		private function checkisAdminOrLabOP()
+		{
+			if(($this->result["loggedUser"]["permission"] != "admin") &&($this->result["loggedUser"]["permission"] != "labOP")){
+				$this->result["Code"] = 1005; 
+				$this->result["CodeDetails"] = "user has no permission for this module";
+				$this->returnJson($this->result);
+				exit;
+			}
+		}		
+		
 		private function checkEmailIsNotLoggedUser()
 		{
 			if($this->arrayOfRequest[0] == $this->result["loggedUser"]["userEmail"]){
@@ -403,6 +606,20 @@
 			header('Content-Type: application/json');
 			echo $return_values;
 		}
-		
+
+		private function returnCSV($result,$title)
+		{
+			$file_csv = tmpfile();
+			fputcsv($file_csv, $title, ',');
+			foreach ($result as $line) {
+				fputcsv($file_csv, $line, ',');
+			}
+			rewind($file_csv);
+			header('Content-Type: application/csv');
+			header('Content-Disposition: attachment; filename="export.csv";');
+			/** Send file to browser for download */
+			fpassthru($file_csv);
+		}		
+
 	}
 ?>

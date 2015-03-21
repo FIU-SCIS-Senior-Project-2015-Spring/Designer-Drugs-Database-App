@@ -21,6 +21,7 @@
 			$this->result = array();
 			$this->result["Code"] = 2000;
 			$this->arrayOfRequest = array();
+			$this->checkVariableNotEmpty($theRequests["email"], "email");			
 			$this->arrayOfRequest[0] = $theRequests["email"]; 
 			$this->requests = $theRequests;
 			$this->dbConfig = $dbConfig;
@@ -52,7 +53,7 @@
 		{
 			$this->checkVariableNotEmpty($this->requests["section"], "Section");
 			//check if user has admin permission to continue unless requesting its own data
-			if($this->requests["section"] != "getMyInfo" && $this->requests["section"] != "setMyName"&& $this->requests["section"] != "setMyPass"&& $this->requests["section"] != "createUser")
+			if($this->requests["section"] != "getMyInfo" && $this->requests["section"] != "setMyName"&& $this->requests["section"] != "setMyPass"&& $this->requests["section"] != "signUP")
 				if ($this->result["loggedUser"]["permission"] != "admin") {
 					$this->result["Code"] = 1005; 
 					$this->result["CodeDetails"] = "user has no permission for this module";
@@ -62,25 +63,26 @@
 			//section controller
 			
 			switch ($this->requests["section"]) {
-			case 'findUser':		$this->userRequestType = "SELECT"; $this->findUser(); 				
+			case 'findUser':		$this->findUser(); 				
 				break;
-			case 'upgradeUser':		$this->userRequestType = "UPDATE"; $this->upgradeUser(); 	
+			case 'upgradeUser':		$this->upgradeUser(); 	
 				break;
-			case 'downgradeUser':	$this->userRequestType = "UPDATE"; $this->downgradeUser();	
+			case 'downgradeUser':	$this->downgradeUser();	
 				break;
-			case 'deleteUser': 		$this->userRequestType = "DELETE"; $this->deleteUser(); 
+			case 'deleteUser': 		$this->deleteUser(); 
 				break;
-			case 'addUser':  		$this->userRequestType = "INSERT"; $this->addUser(); 
+			case 'addUser':  		$this->addUser(); 
 				break;
-			case 'getMyInfo': 		$this->userRequestType = "SELECT"; $this->getMyInfo(); 
+			case 'getMyInfo': 		$this->getMyInfo(); 
 				break;
-			case 'setMyName': 		$this->userRequestType = "UPDATE"; $this->setMyName($this->requests["newName"]);	 
+			case 'setMyName': 		$this->setMyName();	 
 				break;
-			case 'setMyPass':		$this->userRequestType = "UPDATE"; $this->setMyPass($this->requests["oldPass"],$this->requests["newPass"],$this->requests["confPass"]);	
+			case 'setMyPass':		$this->setMyPass();	
 				break;
-			case 'createUser':		$this->userRequestType = "INSERT"; $this->createUser($this->requests["name"],$this->requests["email"],$this->requests["pass"],$this->requests["confPass"]);	
+			case 'signUP':		 	$this->signUP();	
 				break;
-
+			case 'countUsers':		$this->countUsers();	
+				break;
 			default:
 			   $this->result["Code"] = 1002;
 			   $this->result["CodeDetails"] = "wrong section";
@@ -92,23 +94,39 @@
 		private function findUser()
 		{
 			$this->checkEmailIsNotLoggedUser();
+			$this->userRequestType = "SELECT"; 
 			//sql need it
 			$this->sql = "SELECT users.uid AS userID, users.uName AS Name, users.uEmail AS email, role.role AS permission
 							FROM users, role
 							WHERE users.uEmail= ? AND users.uRole=role.rid";
 			$this->requestDatabase(false);
 		}
+
+		private function countUsers()
+		{
+			$this->userRequestType = "SELECT"; 
+			//sql need it
+			$this->sql = "SELECT COUNT(*) AS adminCount FROM users	WHERE users.urole = '1'";
+			$temp = $this->requestDatabase(true);
+			$this->result["data"]["adminCount"] = $temp[0]["adminCount"];
+			$this->sql = "SELECT COUNT(*) AS labOPCount FROM users	WHERE users.urole = '2'";
+			$temp = $this->requestDatabase(true);
+			$this->result["data"]["labOPCount"] = $temp[0]["labOPCount"];
+			$this->returnJson($this->result);
+		}
 		
 		private function upgradeUser()
-		{					
+		{
 			$this->checkEmailIsNotLoggedUser();
+			$this->userRequestType = "UPDATE";
 			//sql need it
 			$this->sql = "UPDATE users SET uRole = '1' WHERE users.uEmail = ?";
 			$this->requestDatabase(false);
 		}
 
 		private function downgradeUser()
-		{				
+		{
+			$this->userRequestType = "UPDATE";
 			$this->checkEmailIsNotLoggedUser();
 			//sql need it	
 			$this->sql = "UPDATE users SET uRole = '2' WHERE users.uEmail = ?";
@@ -118,6 +136,7 @@
 		private function deleteUser()
 		{
 			$this->checkEmailIsNotLoggedUser();
+			$this->userRequestType = "DELETE"; 
 			//sql need it
 			$this->sql = "DELETE FROM users WHERE users.uEmail = ?";
 			$this->requestDatabase(false);
@@ -126,12 +145,13 @@
 		private function addUser()
 		{
 			$this->checkEmailIsNotLoggedUser();
+			$this->userRequestType = "INSERT"; 
 			$date = date("Y-m-d", strtotime("now+2 days")); 
 			$msg = "You have been invited to join ".$this->dbConfig["Address"]."/nPlease accept this offer before: ".$date."/n by accessing this link: ";
 			$msg .= $this->dbConfig["Address"]."/newUser";
 			mail($this->arrayOfRequest[0],$this->dbConfig["Address"]." Invite",$msg);
 			$this->arrayOfRequest[1] = $date;
-			
+	
 			//sql need it
 			$this->sql = "INSERT INTO userinvite (`iemail`, `iexp`) VALUES (?,?)";
 			$this->counter++;
@@ -141,7 +161,7 @@
 		private function getMyInfo()
 		{
 			$this->checkEmailIsLoggedUser();
-			
+			$this->userRequestType = "SELECT";
 			//sql need it
 			$this->sql = "SELECT users.uid AS userID, users.uName AS Name, users.uEmail AS email, role.role AS permission
 								FROM users, role
@@ -149,10 +169,13 @@
 			$this->requestDatabase(false);
 		}
 
-		private function setMyName($newName)
+		private function setMyName()
 		{
 			$this->checkEmailIsLoggedUser();
-			$this->checkVariableNotEmpty($newName, "New name");
+			$this->checkVariableNotEmpty($this->requests["newName"], "New name");
+			$newName = $this->requests["newName"];
+			$this->userRequestType = "UPDATE"; 
+			
 			$this->arrayOfRequest[1] = $this->arrayOfRequest[0];
 			$this->arrayOfRequest[0] = $this->requests["newName"];
 			$this->sql = "UPDATE users SET uName = ? WHERE users.uEmail = ?";
@@ -160,11 +183,16 @@
 			$this->requestDatabase(false);
 		}
 		
-		private function setMyPass($oldPass, $newPass, $confPass)
+		private function setMyPass()
 		{
-			$this->checkVariableNotEmpty($newPass, "New password");
-			$this->checkVariableNotEmpty($confPass, "Confirmation password");
-			$this->checkVariableNotEmpty($oldPass, "Old password");
+			$this->checkVariableNotEmpty($this->requests["newPass"], "New password");
+			$this->checkVariableNotEmpty($this->requests["confPass"], "Confirmation password");
+			$this->checkVariableNotEmpty($this->requests["oldPass"], "Old password");
+			$oldPass = $this->requests["oldPass"];
+			$newPass = $this->requests["newPass"];
+			$confPass = $this->requests["confPass"];
+			
+			$this->userRequestType = "UPDATE";
 			
 			if(md5($oldPass) != $this->result["loggedUser"]["pass"]){
 				$this->result["Code"] = 1010;
@@ -187,12 +215,17 @@
 			$this->requestDatabase(false);
 		}
 
-		private function createUser($name, $email, $newPass, $confPass)
+		private function signUP()
 		{
-			$this->checkVariableNotEmpty($name, "Name");
-			$this->checkVariableNotEmpty($email, "Email");
-			$this->checkVariableNotEmpty($newPass, "New password");
-			$this->checkVariableNotEmpty($confPass, "Confirmation password");
+			$this->checkVariableNotEmpty($this->requests["name"], "Name");
+			$this->checkVariableNotEmpty($this->requests["email"], "Email");
+			$this->checkVariableNotEmpty($this->requests["pass"], "New password");
+			$this->checkVariableNotEmpty($this->requests["confPass"], "Confirmation password");
+			
+			$name = $this->requests["name"];
+			$email = $this->requests["email"];
+			$newPass = $this->requests["pass"];
+			$confPass = $this->requests["confPass"];
 			
 			if($confPass != $newPass){
 				$this->result["Code"] = 1010;

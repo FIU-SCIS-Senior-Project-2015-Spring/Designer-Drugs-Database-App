@@ -8,9 +8,11 @@
 			<div class="panel-heading">Account Summary</div>
 			<div class="panel-body">
 				<ul class="nav nav-pills nav-stacked">
-				  <li class="list-group-item list-group-item-success">Drugs Uploaded<span class="badge pull-right">{{r[0]["totalDrugs"]}}</span></li>
-				  <li class="list-group-item list-group-item-success" ng-show="userinfo.permission =='admin'">Current Lab Operators<span class="badge pull-right">{{r[0]["totalLabOP"]}}</span></li>
-				  <li class="list-group-item list-group-item-success" ng-show="userinfo.permission =='admin'">Current admins<span class="badge pull-right">{{r[0]["totalLabAdmin"]}}</span></li>
+				  <li class="list-group-item list-group-item-success">Drugs Uploaded<span class="badge pull-right">{{r[1].data.compCount}}</span></li>
+				  <li class="list-group-item list-group-item-success">Unread Messages<span class="badge pull-right">{{r[2].data.umsgCount}}</span></li>
+				  <li class="list-group-item list-group-item-success">Total Messages<span class="badge pull-right">{{(1*r[2].data.rmsgCount+1*r[2].data.umsgCount)}}</span></li>
+				  <li class="list-group-item list-group-item-success" ng-show="userinfo.permission =='admin'">Current Admins<span class="badge pull-right">{{r[0].data.adminCount}}</span></li>
+				  <li class="list-group-item list-group-item-success" ng-show="userinfo.permission =='admin'">Current Lab Operators<span class="badge pull-right">{{r[0].data.labOPCount}}</span></li>
 				</ul>
 			</div>
 		</div>
@@ -19,10 +21,12 @@
 
 <script>
 sys.q = [
-	{url:"request/accntSumary.php"}
+{method: 'POST',url: 'request/userModuleCall.php?nocache=1',data: { section: 'countUsers', email: "none@ll.dd"}},
+{method: 'POST',url: 'request/compModuleCall.php?nocache=1',data: { section: 'countComp', email: "none@ll.dd"}},
+{method: 'POST',url: 'request/msgModuleCall.php?nocache=1',data: { section: 'countMsg', email: "none@ll.dd"}}
 ];
 
 sys.ctrl = function($scope, $http) {
-	//if(sys.user == null) $scope.go("/home");
+	$scope.checkUserData();
 }
 </script>	

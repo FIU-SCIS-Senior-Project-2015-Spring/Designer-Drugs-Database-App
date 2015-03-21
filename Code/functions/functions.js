@@ -26,17 +26,10 @@ myapp.controller('ControllerNavbar', function($scope, $location) {
 		.done(function( msg ) {
 			sys.user = null;
 			$scope.userinfo = sys.user;
-			$location.path("/home");
+			//$location.path("/home");
+			window.location.href = "logOutPage.html";
 		});
-		
-/*		
-		$http.post("request/authModuleClass.php",{section: "logOut"})
-		.success(function(json) {
-			sys.user = null;
-			$scope.userinfo = sys.user;
-			$location.path("/home");
-		});		
-*/	}
+	}
 });                                    
 	
 myapp.config(['$routeProvider',function($routeProvider) {
@@ -48,12 +41,40 @@ myapp.config(['$routeProvider',function($routeProvider) {
 			},
 			controller  : 'MyController'
 		})
+		.when('/:page/:itemId', {
+			templateUrl : function(route){
+			sys.q = [];
+			sys.params = route;
+			return "pages/"+route.page+".html";
+			},
+			controller  : 'MyController'
+		})
 		.otherwise({
 			redirectTo : '/home'
 		});
 }]);
+myapp.directive('img', function () {
+    return {
+        restrict: 'E',        
+        link: function (scope, element, attrs) {     
+            // show an image-missing image
+            element.error(function () {
+                var w = element.width();
+                var h = element.height();
+                // using 20 here because it seems even a missing image will have ~18px width 
+                // after this error function has been called
+                if (w <= 20) { w = 100; }
+                if (h <= 20) { h = 100; }
+                var url = 'img/NoPic.jpg';
+                element.prop('src', url);
+                element.css('border', 'double 3px #cccccc');
+            });
+        }
+    }
+});
 
-myapp.controller('MyController', function($scope, $http, $location) {
+myapp.controller('MyController', function($scope, $http, $location, $timeout) {
+	$scope.timeout = $timeout;
 	$scope.userinfo = sys.user;
     $scope.r = [];
     var len_q = sys.q.length;
@@ -94,6 +115,26 @@ myapp.controller('MyController', function($scope, $http, $location) {
 
 	$scope.go = function ( path ) {
 		$location.path( path );
+	};	
+
+	$scope.checkUserData = function () {
+		if(sys.user == null) {
+			$http.post("request/authModuleCall.php",
+			{section:"checkUserLoggedIn"})
+			.success(function(json) {
+				if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+				else if(json["Code"] == 2000){
+					sys.user = json["loggedIn"];
+					$scope.userinfo = sys.user;
+					sys.navbarScope.userinfo = sys.user;
+				}else{
+					$('#mMessgTitle').text("Access Denied.");		
+					$('#mMessgText').text("You must loggin to access this page.");
+					$('#mMessg').modal('show');	
+					$scope.go("/home");
+				}
+			});
+		}
 	};	
 	
 	if(angular.isFunction(sys.ctrl)) sys.ctrl($scope,$http);

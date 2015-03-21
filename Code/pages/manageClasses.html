@@ -51,10 +51,12 @@ sys.q = [
 
 
 sys.ctrl = function($scope, $http) {
-$scope.newClass = "";
-$scope.modalAction = "";
-$scope.showDelete = false;
-$scope.classIndex = "";
+	$scope.checkUserData();
+
+	$scope.newClass = "";
+	$scope.modalAction = "";
+	$scope.showDelete = false;
+	$scope.classIndex = "";
 
 	$scope.callModalAddClass= function(){
 		$scope.newClass = "";

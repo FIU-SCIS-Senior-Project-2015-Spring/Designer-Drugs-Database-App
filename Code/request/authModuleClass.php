@@ -28,6 +28,8 @@
 				break;
 			case 'testSesionInfo':	return $this->testSesionInfo();	
 				break;
+			case 'checkUserLoggedIn':	return $this->checkUserLoggedIn();	
+				break;
 			case 'logOut':	$this->logOut();	
 				break;			
 			default:
@@ -54,19 +56,20 @@
 			$this->requestDatabase();			
 
 			//create session
+			
 			session_start();
-			//fill in session variables
 			$_SESSION["userEmail"] = $this->result["loggedIn"]['email'];
 			$_SESSION["userID"] = $this->result["loggedIn"]['userID'];
+			session_write_close();
 			$this->returnJson($this->result);
 		}
 		
 		private function testSesionInfo()
 		{
 			session_start();
-
 			$this->arrayOfRequest[0] = $_SESSION["userEmail"];
 			$this->arrayOfRequest[1] = $_SESSION["userID"];
+			session_write_close();
 			
 			$this->checkVariableNotEmpty($this->arrayOfRequest[0],"Session");
 			$this->checkVariableNotEmpty($this->arrayOfRequest[1],"Session");	
@@ -77,10 +80,31 @@
 			$this->requestDatabase();
 			return $this->result;
 		}
+
+		private function checkUserLoggedIn()
+		{
+			session_start();
+			$this->arrayOfRequest[0] = $_SESSION["userEmail"];
+			$this->arrayOfRequest[1] = $_SESSION["userID"];
+			session_write_close();
+			
+			$this->checkVariableNotEmpty($this->arrayOfRequest[0],"Session");
+			$this->checkVariableNotEmpty($this->arrayOfRequest[1],"Session");	
+			
+			$this->sql = "SELECT users.uid as userID, users.uName AS Name, users.uEmail AS email, role.role AS permission
+							FROM users, role
+							WHERE users.uEmail= ? AND users.uid= ? AND users.uRole=role.rid";
+			$this->requestDatabase();			
+			$this->returnJson($this->result);
+		}
 		
 		private function logOut()
 		{
 			session_start();
+			$_SESSION = array();
+			//session_write_close();
+			//exit;
+			if(isset($_COOKIE[session_name()])) setcookie(session_name(),'',time()-42000,'/');
 			session_destroy();
 			$this->returnJson($this->result);
 		}

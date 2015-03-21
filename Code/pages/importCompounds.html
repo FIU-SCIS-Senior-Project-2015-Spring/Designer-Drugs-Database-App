@@ -5,23 +5,38 @@
 	</div>
 	<div class="col-lg-7" id="userMainDtail">
 		<div class="panel panel-primary">
-			<div class="panel-heading">Import Compounds</div>
+			<div class="panel-heading">Import CSV</div>
 			<div class="panel-body">
-				<div class="panel panel-primary"><div class="panel-body">
-				Enter csv file
-				<div>
-					<input type="file" ng-file-select="onFileSelect($files)" accept="csv/*">
-				</div>
-				</div></div>
-				<div class="panel panel-primary"><div class="panel-body">
-				Show folder where compound pictures are located
-				<div>
-					<input type="file" ng-file-select="onFileSelect($files)" accept="folder/*">
-				</div>
-				</div></div>
+				<input type="file" ng-file-select="onCSVFileSelect($files)" accept="csv/*">
 			</div>
 			<div class="panel-footer">
-				<button type="button" class="btn btn-info" ng-click="upload()">Upload</button>
+				<button type="button" class="btn btn-info" ng-click="uploadCSV()">Upload CSV</button>
+			</div>
+		</div>
+		
+		<div class="panel panel-primary">
+			<div class="panel-heading">Import Pictures</div>
+			<div class="panel-body">
+				<div>
+					<input type="file" ng-file-select="onFileSelect($files)" multiple accept="image/*">
+				</div>
+				<br ng-show='listFiles.length'/>
+				<div ng-show='listFiles.length'>
+					<div ng-repeat="f in listFiles" class="col-lg-4">
+						<div class="panel panel-primary">
+							<div class="panel-heading">{{($index + 1) + '.'}}{{f.name}} - size: {{f.size}}B - type: {{f.type}}</div>
+							<div class="panel-body">
+								<img ng-show="dataFiles[$index]" ng-src="{{dataFiles[$index]}}" class="img-thumbnail">
+							</div>
+							<div class="panel-footer">
+								<button class="btn btn-info" ng-click="remove($index)">Remove</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="panel-footer">
+				<button class="btn btn-info" ng-click="uploadPics()">Upload All Pics</button>
 			</div>
 		</div>
 	</div>
@@ -34,8 +49,119 @@ sys.q = [
 
 sys.ctrl = function($scope, $http) {
 
-		$scope.upload = function(){
-		}
+	$scope.file  = "";
+	$scope.listFiles = [];
+	$scope.dataFiles = [];
 
+	$timeout = $scope.timeout;
+	$scope.checkUserData();
+
+	$scope.uploadCSV = function(){
+		var formData = new FormData();
+		//Append files
+		formData.append('file', $scope.file);
+
+		
+		//Upload
+		$.ajax({
+		  url: "request/request_importCSV.php",
+		  type: "POST",
+		  data: formData,
+		  processData: false,  // tell jQuery not to process the data
+		  contentType: false,   // tell jQuery not to set contentType
+		  transformRequest: angular.identity
+		}).done(function(json, status, headers, config) {
+			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+			else if((json["Code"] == 2000) || (typeof json["Code"] === 'undefined')){
+				if(typeof json !== 'undefined' && json.length>0 && json[0] !== 'undefined'){
+					$('#mMessgTitle').text("Compounds Insertions.");
+					var msg = "Import partially successful, the following items were not inserted because they already existed: ";
+					var notAdded = [];
+					notAdded = JSON.parse(json);
+					for (i = 0; i < notAdded.length; i++) { 
+						if(i==0) msg += notAdded[i];
+						else msg += ", "+ notAdded[i];
+					}
+					msg += " If you need to modify them please go and modify them in the compound edit Menu.";
+					$('#mMessgText').text(msg);
+					$('#mMessg').modal('show');				
+				}else{
+					$('#mMessgTitle').text("Import Success.");		
+					$('#mMessgText').text("Compounds have been inserted successfully");
+					$('#mMessg').modal('show');				
+				}
+			}else{
+				$('#mMessgTitle').text("Acction cannot be processed.");		
+				$('#mMessgText').text(json["CodeDetails"]);
+				$('#mMessg').modal('show');	
+			}
+		});		
+	}
+	
+	$scope.onCSVFileSelect = function($files) {
+		$scope.file = $files[0];
+	};
+	
+	
+	
+	$scope.onFileSelect = function($files) {
+		for(var i=0; i<$files.length; i++){    
+			if  ($files[i].type.match('image')) {
+				var $file = $files[i];
+				$scope.listFiles.push($file);
+				if ( window.FileReader != null && (window.FileAPI == null || FileAPI.html5 != false) ) {
+					var fileReader = new FileReader();
+					fileReader.onloadend = function(e) {
+						$timeout(function() {
+							$scope.dataFiles.push(e.target.result);
+						});
+					}
+					fileReader.readAsDataURL($file);
+				}
+			}
+			else
+			{
+				//ERROR: Solo se aceptan imagenes
+			}
+		}	
+	};
+	
+	$scope.remove = function(elm){
+		$scope.listFiles.splice(elm, 1);
+		$scope.dataFiles.splice(elm, 1);
+		$scope.name = 'hhh';
+	}
+	
+	$scope.uploadPics = function(){
+		//console.log('hhhh');
+		if($scope.listFiles.length > 0 && $scope.dataFiles.length > 0){
+			var formData = new FormData();
+			// Append all the data
+			//formData.append("name", $scope.name);
+			//Append files
+			for (var i=0; i < $scope.listFiles.length; i++)
+				formData.append('files[]', $scope.listFiles[i]);
+			
+			$.ajax({
+				url: "request/request_importPics.php",
+				type: "POST",
+				data: formData,
+				processData: false,  // tell jQuery not to process the data
+				contentType: false,   // tell jQuery not to set contentType
+				transformRequest: angular.identity
+			}).done(function(json, status, headers, config) {
+				if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+				else if(json["Code"] == 2000){
+					$scope.clearPicList();
+				}
+			});	
+		}
+	}
+	
+	$scope.clearPicList = function(){
+		$scope.listFiles = [];
+		$scope.dataFiles = [];
+	}
+	
 }
 </script>

@@ -39,7 +39,7 @@ sys.ctrl = function($scope, $http) {
 	$scope.uPasstwo = "";
 
 	$scope.clickSubmit= function(){
-		$http.post("request/userModuleCall.php",{name:$scope.uName ,email:$scope.uEmail ,pass:$scope.uPass ,confPass:$scope.uPasstwo , section:"createUser"})
+		$http.post("request/userModuleCall.php",{name:$scope.uName ,email:$scope.uEmail ,pass:$scope.uPass ,confPass:$scope.uPasstwo , section:"signUP"})
 		.success(function(json) {
 			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
 			else if(json["Code"] == 2000){

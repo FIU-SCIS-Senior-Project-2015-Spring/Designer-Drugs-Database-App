@@ -4,7 +4,7 @@
 		<div class=" col-sm-4 col-md-offset-1">
 			<div class="panel panel-default">
 				<div class="panel-body">
-					<img src="img/drug.png" alt="..." class="img-thumbnail">
+					<img ng-src="img/{{r[0].data[0].cFormula}}.jpg" class="img-thumbnail" width="300px">
 				</div>
 			</div>
 		</div>
@@ -28,11 +28,13 @@
 	</div>
 	<div class="col-sm-12">
 		<div class=" col-sm-4 col-md-offset-1">
+			<!--
 			<div class="panel panel-default">
 				<div class="panel-body">
 					<img src="img/graph.png" alt="..." class="img-thumbnail">
 				</div>
 			</div>
+			-->
 		</div>
 
 		<div class=" col-sm-6">
@@ -63,8 +65,8 @@
 	
 <script>
 sys.q = [
-{method: 'POST',url: 'request/compModuleCall.php?nocache=2',data: { section: 'getCompbyId', id: sys.passVariable.cid}},
-{method: 'POST',url: 'request/compModuleCall.php?nocache=3',data: { section: 'getTrans', CompId: sys.passVariable.cid }},
+{method: 'POST',url: 'request/compModuleCall.php?nocache=2',data: { section: 'getCompbyId', id: sys.params.itemId}},
+{method: 'POST',url: 'request/compModuleCall.php?nocache=3',data: { section: 'getTrans', CompId: sys.params.itemId }},
 {method: 'POST',url: 'request/compModuleCall.php?nocache=1',data: { section: 'getClass' }}
 ];
 

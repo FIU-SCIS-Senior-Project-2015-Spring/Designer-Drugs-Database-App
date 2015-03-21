@@ -43,7 +43,8 @@
 
 <script>
 sys.ctrl = function($scope, $http) {
-	//if(sys.user == null) $scope.go("/home");
+	$scope.checkUserData();
+
 	$scope.SearchCriteria = "";
 	$scope.resultL = [];
 	
@@ -60,7 +61,7 @@ sys.ctrl = function($scope, $http) {
 					$('#resultList').modal('show');					
 				}else{
 					sys.passVariable = json["data"][0];
-					$scope.go("/userModCompund");
+					$scope.go('/userModCompund/'+sys.passVariable.cid);
 				}
 
 			}else {	//According to Code 1001 login was unsuccessful
@@ -75,7 +76,7 @@ sys.ctrl = function($scope, $http) {
 	$scope.selectOne= function(cid){
 		$('#resultList').modal('hide');
 		sys.passVariable = $scope.resultL[cid];
-		$scope.go("/userModCompund");
+		$scope.go('/userModCompund/'+sys.passVariable.cid);
 	}
 
 	$scope.gotoImportPage= function(){
