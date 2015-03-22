@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 16, 2015 at 03:48 AM
+-- Generation Time: Mar 22, 2015 at 05:16 PM
 -- Server version: 5.6.16
 -- PHP Version: 5.5.11
 
@@ -20,6 +20,7 @@ DROP DATABASE drugsdb;
 CREATE DATABASE drugsdb;
 USE drugsdb;
 --
+--
 -- Database: `drugsdb`
 --
 
@@ -33,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `class` (
   `cid` int(11) NOT NULL AUTO_INCREMENT,
   `class` varchar(100) NOT NULL,
   PRIMARY KEY (`cid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
 
 --
 -- Dumping data for table `class`
@@ -41,7 +42,10 @@ CREATE TABLE IF NOT EXISTS `class` (
 
 INSERT INTO `class` (`cid`, `class`) VALUES
 (1, 'Test'),
-(2, 'Test51');
+(2, 'Test51'),
+(5, 'Cathinone'),
+(6, 'Test34'),
+(7, 'Test7');
 
 -- --------------------------------------------------------
 
@@ -62,31 +66,40 @@ CREATE TABLE IF NOT EXISTS `compounds` (
   `cClass` int(11) NOT NULL,
   PRIMARY KEY (`cid`),
   KEY `cClass` (`cClass`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=23 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=32 ;
 
 --
 -- Dumping data for table `compounds`
 --
 
 INSERT INTO `compounds` (`cid`, `cName`, `cFormula`, `cOName`, `cMass`, `cPrecursor`, `cFrag`, `cRT`, `cCAS`, `cClass`) VALUES
-(2, 'test', 'test', 'test', 999, 23, 23, 2311, 'test11', 1),
-(4, 'lolo', 'lolo', 'lolo', 12, 12, 12, 12, '12', 2),
-(5, 'll', 'll', 'll', 1, 1, 1, 1, '1', 1),
-(6, 'll', 'll', 'll', 1, 1, 1, 1, '1', 1),
-(7, 'll', 'll', 'll', 1, 1, 1, 1, '1', 1),
-(8, 'll', 'll', 'll', 1, 1, 1, 1, '1', 1),
-(9, 'll', 'll', 'll', 1, 1, 1, 1, '1', 1),
-(10, 'll', 'll', 'll', 1, 1, 1, 1, '1', 1),
-(11, 'll', 'll', 'll', 1, 1, 1, 1, '1', 1),
-(12, 'l', 'l', 'l', 1, 1, 1, 1, '1', 2),
-(13, 'l', 'l', 'l', 1, 1, 1, 1, '1', 2),
-(14, '1', '1', '1', 1, 1, 1, 1, '1', 1),
-(15, '1', '1', '1', 1, 1, 1, 1, '1', 1),
-(16, '1', '1', '1', 1, 1, 1, 1, '1', 1),
-(17, '1', '1', '1', 1, 1, 1, 1, '1', 1),
-(18, '1', '1', '1', 1, 1, 1, 1, '1', 2),
-(19, '1', '1', '1', 1, 1, 1, 1, '1', 2),
-(22, 'myName', 'MyForm', 'MyOname', 1, 1234, 12, 123, '12345', 1);
+(28, 'myName', 'MyForm', 'MyOname', 1, 1234, 12, 123, '12345', 1),
+(29, 'll', 'll', 'll', 1, 1, 1, 1, '1', 5),
+(30, '1', '1', '1', 1, 1, 1, 1, '1', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `messages`
+--
+
+CREATE TABLE IF NOT EXISTS `messages` (
+  `mid` int(11) NOT NULL AUTO_INCREMENT,
+  `mfrom` varchar(50) NOT NULL,
+  `mto` varchar(50) NOT NULL,
+  `msubject` varchar(150) NOT NULL,
+  `mtext` varchar(400) NOT NULL,
+  `mread` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`mid`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
+
+--
+-- Dumping data for table `messages`
+--
+
+INSERT INTO `messages` (`mid`, `mfrom`, `mto`, `msubject`, `mtext`, `mread`) VALUES
+(1, 'carlos@gmail.com', 'admin', 'Test', 'dsfejbdsvjsdfb', 1),
+(5, 'fgdf', 'admin', 'sdfdsfs', 'sdfsdsdf', 0);
 
 -- --------------------------------------------------------
 
@@ -124,45 +137,26 @@ CREATE TABLE IF NOT EXISTS `transition` (
   `tRIInt` double NOT NULL,
   PRIMARY KEY (`tid`),
   KEY `cid` (`cid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=14 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=64 ;
 
 --
 -- Dumping data for table `transition`
 --
 
 INSERT INTO `transition` (`tid`, `cid`, `tProduct`, `tCE`, `tAbundance`, `tRIInt`) VALUES
-(1, 2, 3, 22, 41, 50),
-(5, 19, 2, 4, 7, 2),
-(6, 2, 12, 12, 12, 12),
-(12, 22, 1, 2, 3, 4),
-(13, 22, 2, 3, 4, 5);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `userinvite`
---
-
-CREATE TABLE IF NOT EXISTS `userinvite` (
-  `iid` int(11) NOT NULL AUTO_INCREMENT,
-  `iemail` varchar(50) NOT NULL,
-  `iexp` date NOT NULL,
-  PRIMARY KEY (`iid`),
-  UNIQUE KEY `iemail` (`iemail`),
-  UNIQUE KEY `iemail_2` (`iemail`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=13 ;
-
---
--- Dumping data for table `userinvite`
---
-
-INSERT INTO `userinvite` (`iid`, `iemail`, `iexp`) VALUES
-(1, 'lalalal', '2015-02-19'),
-(8, 'carlos.mrtez2002@gmail.com', '2015-02-24'),
-(9, 'test@gmail.com', '2015-02-25'),
-(10, 'test2@gmail.com', '2015-02-25'),
-(11, 'test3@gmail.com', '2015-02-25'),
-(12, 'carlos@fiu.edu', '2015-03-08');
+(39, 28, 1, 2, 3, 4),
+(40, 28, 2, 3, 4, 5),
+(41, 29, 0, 0, 0, 0),
+(42, 29, 66, 88, 99, 77),
+(43, 29, 0, 0, 0, 0),
+(44, 29, 0, 0, 0, 0),
+(45, 29, 0, 0, 0, 0),
+(46, 29, 0, 0, 0, 0),
+(47, 29, 0, 0, 0, 0),
+(48, 30, 0, 0, 0, 0),
+(49, 30, 0, 0, 0, 0),
+(50, 30, 0, 0, 0, 0),
+(51, 30, 0, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -178,14 +172,14 @@ CREATE TABLE IF NOT EXISTS `users` (
   `uRole` int(11) NOT NULL,
   PRIMARY KEY (`uid`),
   KEY `uRole` (`uRole`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
 
 --
 -- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`uid`, `uName`, `uEmail`, `uPass`, `uRole`) VALUES
-(2, 'Jose', 'carlos@gmail.com', '0cbc6611f5540bd0809a388dc95a615b', 1),
+(2, 'Carlos', 'carlos@gmail.com', '0cbc6611f5540bd0809a388dc95a615b', 1),
 (3, 'Carlos', 'Carlos@fiu.edu', '0cbc6611f5540bd0809a388dc95a615b', 2),
 (6, 'Jose', 'carlos.mrtez2002@gmail.com', '0cbc6611f5540bd0809a388dc95a615b', 2),
 (7, 'Test', 'test@gmail.com', '0cbc6611f5540bd0809a388dc95a615b', 2);
