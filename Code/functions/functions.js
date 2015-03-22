@@ -13,21 +13,17 @@ var myapp = angular.module('mainApp', ['angularFileUpload','ngRoute']);
 * userinfo is changed through sys.navbarScope then the digest refreshes the 
 * page automatically because there has been a change to the scope.
 */
-myapp.controller('ControllerNavbar', function($scope, $location) {
+myapp.controller('ControllerNavbar', function($scope, $location, $http) {
 	$scope.userinfo = sys.user;
 	sys.navbarScope = $scope;
 	
 	$scope.clickLogout= function(){
-	$.ajax({
-		type: "POST",
-		url: "request/authModuleClass.php",
-		data: {section: "logOut"}
-		})
-		.done(function( msg ) {
+		$http.post("request/authModuleCall.php",
+		{section:"logOut"})
+		.success(function(msg) {
 			sys.user = null;
 			$scope.userinfo = sys.user;
-			//$location.path("/home");
-			window.location.href = "logOutPage.html";
+			$location.path("/home");
 		});
 	}
 });                                    

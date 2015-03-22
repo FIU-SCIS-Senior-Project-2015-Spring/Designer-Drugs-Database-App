@@ -26,7 +26,7 @@
 					<input class="form-control" type="text" placeholder="input Retention time" ng-model="r[1].data[0].cRT"/>
 					<input class="form-control" type="text" placeholder="input Precursor" ng-model="r[1].data[0].cPrecursor"/>
 					<input class="form-control" type="text" placeholder="input CAS" ng-model="r[1].data[0].cCAS"/>
-					<select id="selectedClass" ng-model="selectedClass" ng-init="selectedClass = {id : r[0].data[0].id}" class="form-control" ng-options="item.label for item in r[0].data track by item.id"></select>
+					<select id="selectedClass" ng-model="selectedClass" class="form-control" ng-options="item.label for item in r[0].data track by item.id"></select>
 				</div>
 			</div>
 			<div class="panel-footer">
@@ -84,12 +84,6 @@
 
 <script>
 
-//sys.q = [
-//{method: 'POST',url: 'request/compModuleCall.php?nocache=1',data: { section: 'getClass' }},
-//{method: 'POST',url: 'request/compModuleCall.php?nocache=2',data: { section: 'getCompbyId', id: 2}},
-//{method: 'POST',url: 'request/compModuleCall.php?nocache=3',data: { section: 'getTrans', CompId: 2 }}
-//];
-
 sys.q = [
 {method: 'POST',url: 'request/compModuleCall.php?nocache=1',data: { section: 'getClass' }},
 {method: 'POST',url: 'request/compModuleCall.php?nocache=2',data: { section: 'getCompbyId', id: sys.params.itemId}},
@@ -109,6 +103,12 @@ sys.ctrl = function($scope, $http) {
 	$scope.listFiles = [];
 	$scope.dataFiles = [];
 	$timeout = $scope.timeout;
+	
+	$http.post("request/compModuleCall.php",
+		{section: 'getCompbyId', id: sys.params.itemId})
+		.success(function(msg) {
+			$scope.selectedClass = {id : msg.data[0].cClass};
+	});
 	
 	$scope.onFileSelect = function($files) {    
 			if  ($files[0].type.match('image')) {
@@ -204,15 +204,16 @@ sys.ctrl = function($scope, $http) {
 	}	
 	
 	$scope.deleteCompound = function(){
-		$http.post("request/request/authModuleCall.php",
-		{section:"testSesionInfo",
+		$http.post("request/compModuleCall.php",
+		{section:"deleteComp",
 		cid: $scope.r[1].data[0].cid})
 		.success(function(json) {
 			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
 			else if(json["Code"] == 2000){
 				$('#mMessgTitle').text("Success.");		
-				$('#mMessgText').text("Transition deleted.");
+				$('#mMessgText').text("Compound deleted.");
 				$('#mMessg').modal('show');
+				$scope.go("/userCompound");
 				}else{
 				$('#mMessgTitle').text("Acction cannot be processed.");		
 				$('#mMessgText').text(json["CodeDetails"]);
@@ -283,6 +284,7 @@ sys.ctrl = function($scope, $http) {
 			console.log(json);
 			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
 			else if(json["Code"] == 2000){
+				console.log(json);
 				$scope.r[2].data.push({"cid":$scope.r[1].data[0].cid,"tid":json["data"]["lastRecordId"],"tProduct":$scope.TransProd,"tCE":$scope.TransCE,"tAbundance":$scope.TransAbd,"tRIInt":$scope.TransInt});
 				$('#mMessgTitle').text("Success.");		
 				$('#mMessgText').text("Transition added.");

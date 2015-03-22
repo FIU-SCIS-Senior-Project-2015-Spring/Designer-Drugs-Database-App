@@ -146,15 +146,14 @@
 		{
 			$this->checkEmailIsNotLoggedUser();
 			$this->userRequestType = "INSERT"; 
-			$date = date("Y-m-d", strtotime("now+2 days")); 
-			$msg = "You have been invited to join ".$this->dbConfig["Address"]."/nPlease accept this offer before: ".$date."/n by accessing this link: ";
-			$msg .= $this->dbConfig["Address"]."/newUser";
+			$msg = "An account have been created for you on ".$this->dbConfig["Address"]."/nPlease enter and change your temporary password of Test1234";
 			mail($this->arrayOfRequest[0],$this->dbConfig["Address"]." Invite",$msg);
-			$this->arrayOfRequest[1] = $date;
 	
 			//sql need it
-			$this->sql = "INSERT INTO userinvite (`iemail`, `iexp`) VALUES (?,?)";
-			$this->counter++;
+			$this->arrayOfRequest[1] = $this->arrayOfRequest[0];
+			$this->arrayOfRequest[0] = "TempName";
+			$this->arrayOfRequest[2] = md5("Temp1234");
+			$this->sql = "INSERT INTO users (`uName`,`uEmail`,`uPass`, `uRole`) VALUES (?,?,?,2)";
 			$this->requestDatabase(false);
 		}
 
@@ -215,7 +214,7 @@
 			$this->requestDatabase(false);
 		}
 
-		private function signUP()
+/*		private function signUP()
 		{
 			$this->checkVariableNotEmpty($this->requests["name"], "Name");
 			$this->checkVariableNotEmpty($this->requests["email"], "Email");
@@ -253,7 +252,7 @@
 			$this->counter = $this->counter +2;
 			$this->requestDatabase(false);
 		}
-		
+*/		 
 		//Checks
 		private function checkVariableNotEmpty($valueOfVariable, $nameOfVariable)
 		{

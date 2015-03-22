@@ -46,7 +46,7 @@
 			  <ul class="nav navbar-nav navbar-right">
 				<li class="active"><a href="#/home">Home</a></li>
 				<li><a href="#/login" ng-show="userinfo==null">Login</a></li>
-				<li><a href="#/home" ng-click="clickLogout()" ng-show="userinfo!=null">LogOut</a></li>
+				<li><a href="#/userMain" ng-click="clickLogout()" ng-show="userinfo!=null">LogOut</a></li>
 				<li><a href="#userMain" ng-show="userinfo!=null">Account</a></li>
 				<li><a href="#/about">About</a></li>
 				<li><a href="#/contact">Contact</a></li>

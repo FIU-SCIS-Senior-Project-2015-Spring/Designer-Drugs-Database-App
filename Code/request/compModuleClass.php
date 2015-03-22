@@ -419,7 +419,8 @@
 		private function addTranswithCompID($cid)
 		{
 			$this->checkisAdminOrLabOP();
-			$this->userRequestType == "INSERT";
+			$this->userRequestType = "INSERT";
+
 			//sql need it
 			$this->sql = "INSERT INTO transition ( `cid`, `tProduct`, `tCE`, `tAbundance`, `tRIInt`) VALUES (?, ?, ?, ?, ?)";
 			$this->arrayOfRequest = [];
@@ -439,6 +440,7 @@
 				$this->arrayOfRequest[$x][4] = $this->requests["Trans"][$x]["Intens"];
 			}
 			
+
 			if (count($this->requests["Trans"])>0){
 				$this->requestDatabase(false);	
 			}else 
@@ -554,7 +556,7 @@
 						$stmt->execute($item);
 				else
 				$stmt->execute($this->arrayOfRequest);
-		
+
 				if ($this->userRequestType == "SELECT"){
 					// set the resulting array to associative
 					$temp = $stmt->setFetchMode(PDO::FETCH_ASSOC); 

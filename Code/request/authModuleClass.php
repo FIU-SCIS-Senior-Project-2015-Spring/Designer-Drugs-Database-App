@@ -67,12 +67,13 @@
 		private function testSesionInfo()
 		{
 			session_start();
+			$this->checkVariableNotEmpty($_SESSION,"Session");
+			$this->checkVariableNotEmpty($_SESSION["userEmail"],"User email");
+			$this->checkVariableNotEmpty($_SESSION["userID"],"User id");	
+			
 			$this->arrayOfRequest[0] = $_SESSION["userEmail"];
 			$this->arrayOfRequest[1] = $_SESSION["userID"];
 			session_write_close();
-			
-			$this->checkVariableNotEmpty($this->arrayOfRequest[0],"Session");
-			$this->checkVariableNotEmpty($this->arrayOfRequest[1],"Session");	
 			
 			$this->sql = "SELECT users.uid as userID, users.uEmail as userEmail,users.uPass as pass, role.role AS permission
 								FROM users, role
@@ -84,13 +85,14 @@
 		private function checkUserLoggedIn()
 		{
 			session_start();
+			$this->checkVariableNotEmpty($_SESSION,"Session");
+			$this->checkVariableNotEmpty($_SESSION["userEmail"],"User email");
+			$this->checkVariableNotEmpty($_SESSION["userID"],"User id");	
+			
 			$this->arrayOfRequest[0] = $_SESSION["userEmail"];
 			$this->arrayOfRequest[1] = $_SESSION["userID"];
 			session_write_close();
-			
-			$this->checkVariableNotEmpty($this->arrayOfRequest[0],"Session");
-			$this->checkVariableNotEmpty($this->arrayOfRequest[1],"Session");	
-			
+						
 			$this->sql = "SELECT users.uid as userID, users.uName AS Name, users.uEmail AS email, role.role AS permission
 							FROM users, role
 							WHERE users.uEmail= ? AND users.uid= ? AND users.uRole=role.rid";
@@ -102,8 +104,6 @@
 		{
 			session_start();
 			$_SESSION = array();
-			//session_write_close();
-			//exit;
 			if(isset($_COOKIE[session_name()])) setcookie(session_name(),'',time()-42000,'/');
 			session_destroy();
 			$this->returnJson($this->result);
@@ -114,8 +114,8 @@
 		{
 			//Checking that the variables are not empty and exist, check # 1003, 1004
 			if(!(isset ($valueOfVariable))){
-				$this->$result["Code"] = 1003;
-				$this->$result["CodeDetails"] = $nameOfVariable. " not found";
+				$this->result["Code"] = 1003;
+				$this->result["CodeDetails"] = $nameOfVariable. " not found";
 				$this->returnJson($this->result);
 				exit;						
 			}
