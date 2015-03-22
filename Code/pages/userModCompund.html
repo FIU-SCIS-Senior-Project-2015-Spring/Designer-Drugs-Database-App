@@ -4,56 +4,93 @@
 		<div ng-include="'pages/userMenu.html'"></div>
 	</div>
 	<div class="col-lg-7" id="userMainDtail">
-
 		<div class="panel panel-primary">
 			<div class="panel-heading">Modify Compound</div>
 			<div class="panel-body">
-				<input type="file" ng-file-select="onFileSelect($files)" accept="image/*">
-				<img ng-show="!dataFiles.length" ng-src="img/{{r[1].data[0].cFormula}}.jpg" class="img-thumbnail" width="120px">
-				<img ng-show="dataFiles.length" ng-src="{{dataFiles[0]}}" class="img-thumbnail" width="120px">
-			</div>
-		</div>
-
-		<div class="panel panel-primary">
-			<div class="panel-heading">Compound Data</div>
-			<div class="panel-body">
-				<div class="form-group">
-					<input class="form-control" type="text" placeholder="input Name" ng-model="r[1].data[0].cName"/>
-					<input class="form-control" type="text" placeholder="input Formula" ng-model="r[1].data[0].cFormula"/>
-					<input class="form-control" type="text" placeholder="input Other Name" ng-model="r[1].data[0].cOName"/>
-					<input class="form-control" type="text" placeholder="input Mass" ng-model="r[1].data[0].cMass"/>
-					<input class="form-control" type="text" placeholder="input Frag" ng-model="r[1].data[0].cFrag"/>
-					<input class="form-control" type="text" placeholder="input Retention time" ng-model="r[1].data[0].cRT"/>
-					<input class="form-control" type="text" placeholder="input Precursor" ng-model="r[1].data[0].cPrecursor"/>
-					<input class="form-control" type="text" placeholder="input CAS" ng-model="r[1].data[0].cCAS"/>
-					<select id="selectedClass" ng-model="selectedClass" class="form-control" ng-options="item.label for item in r[0].data track by item.id"></select>
+				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+				  <div class="panel panel-primary">
+					<div class="panel-heading" role="tab" id="headingOne">
+					  <h4 class="panel-title">
+						<a data-toggle="collapse" data-parent="#accordion" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+						  Compound Picture
+						</a>
+					  </h4>
+					</div>
+					<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+						<div class="panel-body">
+							<input type="file" ng-file-select="onFileSelect($files)" accept="image/*">
+							<img ng-show="!dataFiles.length" ng-src="img/{{r[1].data[0].cFormula}}.jpg" class="img-thumbnail" width="120px">
+							<img ng-show="dataFiles.length" ng-src="{{dataFiles[0]}}" class="img-thumbnail" width="120px">
+						</div>
+						<div class="panel-footer">
+							<button type="button" class="btn btn-info" ng-click="uploadPic()">Update Pic</button>
+						</div>
+					</div>
+				  </div>
+				  
+				  <div class="panel panel-primary">
+					<div class="panel-heading" role="tab" id="headingTwo">
+					  <h4 class="panel-title">
+						<a class="collapsed" data-toggle="collapse" data-parent="#accordion" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+						  Compound Data
+						</a>
+					  </h4>
+					</div>
+					<div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+						<div class="panel-body">
+							<div class="form-group">
+								<input class="form-control" type="text" placeholder="input Name" ng-model="r[1].data[0].cName"/>
+								<input class="form-control" type="text" placeholder="input Formula" ng-model="r[1].data[0].cFormula"/>
+								<input class="form-control" type="text" placeholder="input Other Name" ng-model="r[1].data[0].cOName"/>
+								<input class="form-control" type="text" placeholder="input Mass" ng-model="r[1].data[0].cMass"/>
+								<input class="form-control" type="text" placeholder="input Frag" ng-model="r[1].data[0].cFrag"/>
+								<input class="form-control" type="text" placeholder="input Retention time" ng-model="r[1].data[0].cRT"/>
+								<input class="form-control" type="text" placeholder="input Precursor" ng-model="r[1].data[0].cPrecursor"/>
+								<input class="form-control" type="text" placeholder="input CAS" ng-model="r[1].data[0].cCAS"/>
+								<select id="selectedClass" ng-model="selectedClass" class="form-control" ng-options="item.label for item in r[0].data track by item.id"></select>
+							</div>
+						</div>
+						<div class="panel-footer">
+							<button type="button" class="btn btn-info" ng-click="Submit()">Update Compound Info</button>
+						</div>
+					</div>
+				  </div>
+				  
+				  <div class="panel panel-primary">
+					<div class="panel-heading" role="tab" id="headingThree">
+					  <h4 class="panel-title">
+						<a class="collapsed" data-toggle="collapse" data-parent="#accordion" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+						  Compound Transition
+						</a>
+					  </h4>
+					</div>
+					<div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+						<div class="panel-body">
+							<div class="panel panel-primary" ng-repeat="item in r[2].data">
+								<div class="panel-heading">Transition # {{$index}}</div>
+								<div class="panel-body">
+									Product: {{item.tProduct}}</br>
+									CE: {{item.tCE}}</br>
+									Abundance: {{item.tAbundance}}</br>
+									Intensity: {{item.tRIInt}}
+								</div>
+								<div class="panel-footer">
+								<button type="button" class="btn btn-info" ng-click="callEditTransitionModal($index)">Edit</button>
+								<button type="button" class="btn btn-info" ng-click="deleteTransition($index)">Delete</button>
+								</div>
+							</div>
+						</div>
+						<div class="panel-footer">
+							<button type="button" class="btn btn-info" ng-click="callADDTransitionModal()">Add Transition</button>
+						</div>
+					</div>
+				  </div>
 				</div>
 			</div>
 			<div class="panel-footer">
-				<button type="button" class="btn btn-info" ng-click="callADDTransitionModal()">Add Transition</button>
-				<button type="button" class="btn btn-info" ng-click="Submit()">Update Compound Info</button>
 				<button type="button" class="btn btn-info" ng-click="deleteCompound()">Delete Compound</button>
 			</div>
 		</div>
-		
-		<div class="panel panel-primary">
-			<div class="panel-heading">Transitions</div>
-			<div class="panel-body">
-				<div class="panel panel-primary" ng-repeat="item in r[2].data">
-					<div class="panel-heading">Transition # {{$index}}</div>
-					<div class="panel-body">
-						Product: {{item.tProduct}}</br>
-						CE: {{item.tCE}}</br>
-						Abundance: {{item.tAbundance}}</br>
-						Intensity: {{item.tRIInt}}
-					</div>
-					<div class="panel-footer">
-					<button type="button" class="btn btn-info" ng-click="callEditTransitionModal($index)">Edit</button>
-					<button type="button" class="btn btn-info" ng-click="deleteTransition($index)">Delete</button>
-					</div>
-				</div>
-			</div>
-		</div>						
 	</div>
 </div>
 
@@ -150,6 +187,11 @@ sys.ctrl = function($scope, $http) {
 				transformRequest: angular.identity
 			}).done(function(json, status, headers, config) {
 				if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
+				else{
+				$('#mMessgTitle').text("Success.");		
+				$('#mMessgText').text("Picture updated.");
+				$('#mMessg').modal('show');
+				}
 			});	
 		}
 	}
@@ -190,11 +232,10 @@ sys.ctrl = function($scope, $http) {
 		.success(function(json) {
 			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
 			else if(json["Code"] == 2000){
-				$scope.uploadPic();
 				$('#mMessgTitle').text("Success.");		
 				$('#mMessgText').text("Compound has been updated.");
 				$('#mMessg').modal('show');
-				$scope.go("/userCompound");
+				//$scope.go("/userCompound");
 				}else{
 				$('#mMessgTitle').text("Acction cannot be processed.");		
 				$('#mMessgText').text(json["CodeDetails"]);

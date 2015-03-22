@@ -7,45 +7,53 @@
 		<div class="panel panel-primary">
 			<div class="panel-heading">Add Compound</div>
 			<div class="panel-body">
-				<div class="form-group">
-					<div>
-						<input type="file" ng-file-select="onFileSelect($files)" accept="image/*">
-						<img ng-show="dataFiles[0]" ng-src="{{dataFiles[0]}}" class="img-thumbnail" width="120px">
+				<div class="panel panel-primary">
+					<div class="panel-heading">Compound Info</div>
+					<div class="panel-body">
+						<div class="form-group">
+							<div>
+								<input type="file" ng-file-select="onFileSelect($files)" accept="image/*">
+								<img ng-show="dataFiles[0]" ng-src="{{dataFiles[0]}}" class="img-thumbnail" width="120px">
+							</div>
+							<input class="form-control" type="text" placeholder="input Name" ng-model="compName"/>
+							<input class="form-control" type="text" placeholder="input Formula" ng-model="compFormula"/>
+							<input class="form-control" type="text" placeholder="input Other Name" ng-model="otherName"/>
+							<input class="form-control" type="text" placeholder="input Mass" ng-model="compMass"/>
+							<input class="form-control" type="text" placeholder="input Frag" ng-model="compfrag"/>
+							<input class="form-control" type="text" placeholder="input Retention time" ng-model="compRT"/>
+							<input class="form-control" type="text" placeholder="input Precursor" ng-model="compPrec"/>
+							<input class="form-control" type="text" placeholder="input CAS" ng-model="compCAS"/>
+							<select id="selectedClass" ng-model="selectedClass" class="form-control" ng-options="item.label for item in r[0].data track by item.id"></select>
+						</div>
 					</div>
-					<input class="form-control" type="text" placeholder="input Name" ng-model="compName"/>
-					<input class="form-control" type="text" placeholder="input Formula" ng-model="compFormula"/>
-					<input class="form-control" type="text" placeholder="input Other Name" ng-model="otherName"/>
-					<input class="form-control" type="text" placeholder="input Mass" ng-model="compMass"/>
-					<input class="form-control" type="text" placeholder="input Frag" ng-model="compfrag"/>
-					<input class="form-control" type="text" placeholder="input Retention time" ng-model="compRT"/>
-					<input class="form-control" type="text" placeholder="input Precursor" ng-model="compPrec"/>
-					<input class="form-control" type="text" placeholder="input CAS" ng-model="compCAS"/>
-					<select id="selectedClass" ng-model="selectedClass" class="form-control" ng-options="item.label for item in r[0].data track by item.id"></select>
+				</div>
+				<div class="panel panel-primary">
+					<div class="panel-heading">Transitions</div>
+					<div class="panel-body">
+						<div class="panel panel-primary" ng-repeat="item in compTrans">
+							<div class="panel-heading">Transition # {{$index}}</div>
+							<div class="panel-body">
+								Product: {{item.product}}</br>
+								CE: {{item.CE}}</br>
+								Abundance: {{item.Abd}}</br>
+								Intensity: {{item.Intens}}
+							</div>
+							<div class="panel-footer">
+							<button type="button" class="btn btn-info" ng-click="callEditTransitionModal($index)">Edit</button>
+							<button type="button" class="btn btn-info" ng-click="deleteTransition($index)">Delete</button>
+							</div>
+						</div>
+					</div>
+					<div class="panel-footer">
+							<button type="button" class="btn btn-info" ng-click="callADDTransitionModal()">Add Transition</button>
+					</div>
 				</div>
 			</div>
 			<div class="panel-footer">
-					<button type="button" class="btn btn-info" ng-click="callADDTransitionModal()">Add Transition</button>
-					<button type="button" class="btn btn-info" ng-click="submitComp()">Submit All</button>
+				<button type="button" class="btn btn-info" ng-click="submitComp()">Submit All</button>
 			</div>
 		</div>
-		<div class="panel panel-primary">
-			<div class="panel-heading">Transitions</div>
-			<div class="panel-body">
-				<div class="panel panel-primary" ng-repeat="item in compTrans">
-					<div class="panel-heading">Transition # {{$index}}</div>
-					<div class="panel-body">
-						Product: {{item.product}}</br>
-						CE: {{item.CE}}</br>
-						Abundance: {{item.Abd}}</br>
-						Intensity: {{item.Intens}}
-					</div>
-					<div class="panel-footer">
-					<button type="button" class="btn btn-info" ng-click="callEditTransitionModal($index)">Edit</button>
-					<button type="button" class="btn btn-info" ng-click="deleteTransition($index)">Delete</button>
-					</div>
-				</div>
-			</div>
-		</div>
+
 	</div>
 </div>
 
