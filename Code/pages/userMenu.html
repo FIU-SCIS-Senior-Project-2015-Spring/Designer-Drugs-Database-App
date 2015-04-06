@@ -2,26 +2,25 @@
 	<div id="accntMenu">
 		<div class="list-group">
 			<a  href="#userMain" class="list-group-item">
-				<h4 class="list-group-item-heading" ng-show="userinfo.permission =='admin'">Managment Summary</h4>
-				<p class="list-group-item-text" ng-show="userinfo.permission =='admin'">See summary of the system.</p>
-				<h4 class="list-group-item-heading" ng-show="userinfo.permission =='labOP'">Chem. Comp. Summary</h4>
-				<p class="list-group-item-text" ng-show="userinfo.permission =='labOP'">See Compound Summary summary.</p>
+				<h4 class="list-group-item-heading">Summary</h4>
+				<p class="list-group-item-text visible-lg-inline-block" ng-show="userinfo.permission =='admin'">See summary of the system.</p>
+				<p class="list-group-item-text visible-lg-inline-block" ng-show="userinfo.permission =='labOP'">See Compound Summary summary.</p>
 			</a>
 			<a href="#userCompound" class="list-group-item">
-				<h4 class="list-group-item-heading">Compound Managment</h4>
-				<p class="list-group-item-text" ng-show="userinfo.permission =='admin'">Details of compound Managment</p>
+				<h4 class="list-group-item-heading">Compounds</h4>
+				<p class="list-group-item-text visible-lg-inline-block" ng-show="userinfo.permission =='admin'">Details of compound Managment</p>
 			</a>
 			<a  href="#userDetails" class="list-group-item">
-				<h4 class="list-group-item-heading">Account Details</h4>
-				<p class="list-group-item-text">Account Login info, user email, address, etc.</p>
+				<h4 class="list-group-item-heading">Account</h4>
+				<p class="list-group-item-text visible-lg-inline-block">Account Login info, user email, address, etc.</p>
 			</a>
 			<a href="#userManagment" class="list-group-item" ng-show="userinfo.permission =='admin'">
-				<h4 class="list-group-item-heading">Manage Users</h4>
-				<p class="list-group-item-text">Delete and Upgrade/downgrade Users from/to admin.</p>
+				<h4 class="list-group-item-heading">Users</h4>
+				<p class="list-group-item-text visible-lg-inline-block">Delete and Upgrade/downgrade Users from/to admin.</p>
 			</a>
 			<a href="#userMsg" class="list-group-item">
-				<h4 class="list-group-item-heading">System Messages</h4>
-				<p class="list-group-item-text" ng-show="userinfo.permission =='admin'">Read, Reply and Delete system messages</p>
+				<h4 class="list-group-item-heading">Messages</h4>
+				<p class="list-group-item-text visible-lg-inline-block" ng-show="userinfo.permission =='admin'">Read, Reply and Delete system messages</p>
 			</a>
 		</div>
 	</div>

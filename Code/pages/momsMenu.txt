@@ -1,0 +1,38 @@
+	<div class="navbar-xs">
+		<div class="navbar-primary">
+			<nav class="navbar navbar-static-top" role="navigation">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-8">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="#">Designer drug database</a>
+				</div>
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-8">
+					<ul class="nav navbar-nav pull-right">
+						<li class="active"><a href="#/home">Home</a></li>
+						<li><a href="#/login" ng-show="userinfo==null">Login</a></li>
+						<li><a href="#/userMain" ng-click="clickLogout()" ng-show="userinfo!=null">LogOut</a></li>
+						<li><a href="#userMain" class="hidden-xs" ng-show="userinfo!=null">Account</a></li>
+						<li><a href="#/about">About</a></li>
+						<li><a href="#/contact">Contact</a></li>
+					</ul>
+				 
+					<li class="dropdown visible-xs-inline" ng-show="userinfo.permission =='admin' || userinfo.permission =='labOP'">
+						<a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Account <span class="caret"></span></a>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="#userMain">Summary</a></li>
+							<li><a href="#userCompound">Compounds</a></li>
+							<li><a href="#userDetails">Account</a></li>
+							<li><a href="#userManagment" ng-show="userinfo.permission =='admin'">Users</a></li>
+							<li><a href="#userMsg">Messages</a></li>
+						</ul>
+					</li>			 
+				</div><!-- /.navbar-collapse -->
+			</nav>
+		</div>
+	</div>	

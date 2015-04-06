@@ -1,9 +1,9 @@
 <!-- account Details -->
-<div class="col-lg-offset-1">
-	<div class="col-lg-3">
+<div class="col-sm-offset-1">
+	<div class="col-sm-3 hidden-xs">
 		<div ng-include="'pages/userMenu.html'"></div>
 	</div>
-	<div class="col-lg-7" id="userMainDtail">
+	<div class="col-sm-7">
 		<div class="panel panel-primary">
 			<div class="panel-heading">Import CSV</div>
 			<div class="panel-body">
@@ -71,6 +71,9 @@ sys.ctrl = function($scope, $http) {
 		  contentType: false,   // tell jQuery not to set contentType
 		  transformRequest: angular.identity
 		}).done(function(json, status, headers, config) {
+			json = JSON.parse(json);
+			//console.log(json);
+			//console.log(json.length+"here");
 			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
 			else if((json["Code"] == 2000) || (typeof json["Code"] === 'undefined')){
 				if(typeof json !== 'undefined' && json.length>0 && json[0] !== 'undefined'){

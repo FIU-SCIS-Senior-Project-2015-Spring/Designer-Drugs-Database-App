@@ -1,6 +1,12 @@
-var sys = {q:[], r:[], ctrl:null,user:null,navbarScope:null,passVariable:null};
+ var sys = {q:[], r:[], ctrl:null,user:null,navbarScope:[],passVariable:null};
 
+$(document).on('click','.navbar-collapse.in',function(e) {
 
+    if( $(e.target).is('a') && ( $(e.target).attr('class') != 'dropdown-toggle' ) ) {
+        $(this).collapse('hide');
+    }
+
+});
 
 ////////////////////////////ANGULAR JS///////////////////////////////
 var myapp = angular.module('mainApp', ['angularFileUpload','ngRoute']);
@@ -49,6 +55,7 @@ myapp.config(['$routeProvider',function($routeProvider) {
 			redirectTo : '/home'
 		});
 }]);
+
 myapp.directive('img', function () {
     return {
         restrict: 'E',        

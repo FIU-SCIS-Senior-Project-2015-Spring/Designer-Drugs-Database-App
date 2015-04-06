@@ -1,11 +1,11 @@
 <!-- manage classes -->
-<div class="col-lg-offset-1">
-	<div class="col-lg-3">
+<div class="col-sm-offset-1">
+	<div class="col-sm-3 hidden-xs">
 		<div ng-include="'pages/userMenu.html'"></div>
 	</div>
-	<div class="col-lg-7" id="userMainDtail">
+	<div class="col-sm-7">
 		<div class="panel panel-primary">
-			<div class="panel-heading">Manage Classes</div>
+			<div class="panel-heading">Manage Compound Classes</div>
 			<div class="panel-body">
 				<div class="list-group">
 					<a ng-repeat="item in r[0].data" class="list-group-item"  ng-Click="callModalEditClass($index)">Name: {{item.label}}</a>

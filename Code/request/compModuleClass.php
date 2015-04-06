@@ -225,8 +225,7 @@
 			$db = new PDO("mysql:host=$dbAddress;dbname=$dbName", $dbUser, $dbPassword);
 
 			$fileUpl = $_FILES["file"];
-			//$fileUpl = $this->requests["file"];
-			
+
 			if ( !$fileUpl["error"] ) 
 			{
 				$file = fopen($fileUpl["tmp_name"], "r");
@@ -240,7 +239,7 @@
 			$psClassCheck = $db->prepare("SELECT cid FROM class WHERE class=:class");
 			$psClassInsert = $db->prepare("INSERT INTO class (class) VALUES (:class)");
 			//Prepared statements for compounds
-			$psCompoundsCheck = $db->prepare("SELECT cid FROM compounds WHERE cFormula=:cFormula");
+			$psCompoundsCheck = $db->prepare("SELECT cid FROM compounds WHERE cOName=:cOName");
 			$psCompoundsInsert = $db->prepare("INSERT INTO compounds (cName, cFormula, cOName, cMass, cPrecursor, cFrag, cRT, cCAS, cClass) 
 															VALUES (:cName, :cFormula, :cOName, :cMass, :cPrecursor, :cFrag, :cRT, :cCAS, :cClass)");
 			//Prepared statements for transition
@@ -248,25 +247,25 @@
 												VALUES (:cid, :tProduct, :tCE, :tAbundance, :tRIInt)");
 
 			$compound = array();
-			$cFormula = '';
+			$cOName = '';
 			$cExisted = array();  // List of compounds that already exist and can not be insert
 			$compound = fgetcsv($file); //First row with the titles
 			$compoundExisted = true;
 			while( !feof($file) )
 			  {
 				$compound = fgetcsv($file);
-				if ( ($compound[3]!='') && ($cFormula != $compound[3]) )
+				if ( ($compound[0]!='') && ($cOName != $compound[0]) )
 				{
 					// New Compound
-					$cFormula = $compound[3];
+					$cOName = $compound[0];
 					//Check if already exist this compound
-					$psCompoundsCheck->bindParam(':cFormula', $compound[3]);
+					$psCompoundsCheck->bindParam(':cOName', $compound[0]);
 					$psCompoundsCheck->execute();
 					$cid = $psCompoundsCheck->fetch();
 					if ( !empty($cid) )
 					{
 						//Already exist
-						array_push($cExisted, $compound[3]);
+						array_push($cExisted, $compound[0]);
 						$compoundExisted = true;
 					}
 					else
@@ -307,7 +306,48 @@
 		private function impPics()
 		{
 			$this->checkisAdmin();
+			$this->userRequestType = "SELECT";
 			
+			$dbAddress = $this->dbConfig["Address"];
+			$dbName = $this->dbConfig["Name"];
+			$dbUser = $this->dbConfig["User"];
+			$dbPassword = $this->dbConfig["Password"];
+			
+			$db = new PDO("mysql:host=$dbAddress;dbname=$dbName", $dbUser, $dbPassword);
+
+			
+			$psCompoundCheck = $db->prepare("SELECT cid FROM compounds WHERE cOName=:fileName");
+			$destination = 'img_upload';
+
+			$files = diverse_array($_FILES["files"]);
+
+			foreach ($files as $file) {
+				if (!$file["error"]) {
+					$tmp_name = $file["tmp_name"];
+					$name = $file["name"];
+					//Check if the compound exist in the database
+					$fileName = substr($name, 0,stripos($name, '.'));
+					$psCompoundCheck->bindParam(':fileName', $fileName);
+					$psCompoundCheck->execute();
+					$cid = $psCompoundCheck->fetch();
+					if ( !empty($cid) )
+					{
+						//The compound exist, save file
+						move_uploaded_file($tmp_name, "$destination/$name");
+					}
+				}
+			}
+
+			// http://php.net/manual/en/reserved.variables.files.php#109958
+			function diverse_array($vector) { 
+				$result = array(); 
+				foreach($vector as $key1 => $value1) 
+					foreach($value1 as $key2 => $value2) 
+						$result[$key2][$key1] = $value2; 
+				return $result; 
+			} 
+
+/*			
 			$destination = '../img';
 
 			$vector = $_FILES["files"];
@@ -328,7 +368,7 @@
 			}
 			
 			$this->returnJson($this->result);
-		}
+*/		}
 		
 		private function expComp()
 		{
@@ -607,6 +647,7 @@
 			$return_values = json_encode($result);
 			header('Content-Type: application/json');
 			echo $return_values;
+			exit;
 		}
 
 		private function returnCSV($result,$title)

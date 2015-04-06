@@ -146,7 +146,7 @@
 		{
 			$this->checkEmailIsNotLoggedUser();
 			$this->userRequestType = "INSERT"; 
-			$msg = "An account have been created for you on ".$this->dbConfig["Address"]."/nPlease enter and change your temporary password of Test1234";
+			$msg = "An account have been created for you on ".$this->dbConfig["Address"]."/nPlease enter and change your temporary password of Temp1234";
 			mail($this->arrayOfRequest[0],$this->dbConfig["Address"]." Invite",$msg);
 	
 			//sql need it
@@ -347,6 +347,7 @@
 			$return_values = json_encode($result);
 			header('Content-Type: application/json');
 			echo $return_values;
+			exit;
 		}
 	
 	}
