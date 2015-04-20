@@ -240,8 +240,8 @@
 			$psClassInsert = $db->prepare("INSERT INTO class (class) VALUES (:class)");
 			//Prepared statements for compounds
 			$psCompoundsCheck = $db->prepare("SELECT cid FROM compounds WHERE cOName=:cOName");
-			$psCompoundsInsert = $db->prepare("INSERT INTO compounds (cName, cFormula, cOName, cMass, cPrecursor, cFrag, cRT, cCAS, cClass) 
-															VALUES (:cName, :cFormula, :cOName, :cMass, :cPrecursor, :cFrag, :cRT, :cCAS, :cClass)");
+			$psCompoundsInsert = $db->prepare("INSERT INTO compounds (cName, cFormula, cOName, cMass, cPrecursor, cFrag, cCAS, cClass, cayman) 
+															VALUES (:cName, :cFormula, :cOName, :cMass, :cPrecursor, :cFrag, :cCAS, :cClass, :cayman)");
 			//Prepared statements for transition
 			$psTransitionInsert = $db->prepare("INSERT INTO transition (cid, tProduct, tCE, tAbundance, tRIInt) 
 												VALUES (:cid, :tProduct, :tCE, :tAbundance, :tRIInt)");
@@ -250,51 +250,76 @@
 			$cOName = '';
 			$cExisted = array();  // List of compounds that already exist and can not be insert
 			$compound = fgetcsv($file); //First row with the titles
+			//Take columns number_format
+			if (count($compound) < 16){
+				//ERROR: Incomplete Data -- Not enought columns
+			}
+			$cNumber = [];
+			$cNumber['Other Names'] = array_search('Other Names', $compound);
+			$cNumber['Compound Name'] = array_search('Compound Name', $compound);
+			$cNumber['CAS'] = array_search('CAS', $compound);
+			$cNumber['Cayman #'] = array_search('Cayman #', $compound);
+			$cNumber['Compound Class'] = array_search('Compound Class', $compound);
+			$cNumber['Formula'] = array_search('Formula', $compound);
+			$cNumber['Mass'] = array_search('Mass', $compound);
+			$cNumber['Precursor'] = array_search('Precursor', $compound);
+			$cNumber['Product'] = array_search('Product', $compound);
+			$cNumber['No. of Transitions'] = array_search('No. of Transitions', $compound);
+			$cNumber['Frag'] = array_search('Frag', $compound);
+			$cNumber['CE'] = array_search('CE', $compound);
+			$cNumber['Abundance'] = array_search('Abundance', $compound);
+			$cNumber['Relative Ion Intensity'] = array_search('Relative Ion Intensity', $compound);
+			$cNumber['CAV'] = array_search('CAV', $compound);
+			$cNumber['Polarity'] = array_search('Polarity', $compound);
 			$compoundExisted = true;
 			while( !feof($file) )
 			  {
 				$compound = fgetcsv($file);
-				if ( ($compound[0]!='') && ($cOName != $compound[0]) )
+				if ( ($compound[$cNumber['Other Names']]!='') && ($cOName != $compound[$cNumber['Other Names']]) )
 				{
 					// New Compound
-					$cOName = $compound[0];
+					$cOName = $compound[$cNumber['Other Names']];
 					//Check if already exist this compound
-					$psCompoundsCheck->bindParam(':cOName', $compound[0]);
+					$psCompoundsCheck->bindParam(':cOName', $compound[$cNumber['Other Names']]);
 					$psCompoundsCheck->execute();
 					$cid = $psCompoundsCheck->fetch();
 					if ( !empty($cid) )
 					{
 						//Already exist
-						array_push($cExisted, $compound[0]);
+						array_push($cExisted, $compound[$cNumber['Other Names']]);
 						$compoundExisted = true;
 					}
 					else
 					{
 						$compoundExisted = false;
 						//Check id exist the "class", else insert class and take id
-						if ( $compound[2] != '')
+						if ( $compound[$cNumber['Compound Class']] != '')
 						{
-							$psClassCheck->bindParam(':class', $compound[2]);
+							$psClassCheck->bindParam(':class', $compound[$cNumber['Compound Class']]);
 							$psClassCheck->execute();
 							$cClass = $psClassCheck->fetchColumn(0);
 							if (empty($cClass))
 							{
 								//Insert
-								$psClassInsert->bindParam(':class', $compound[2]);
+								$psClassInsert->bindParam(':class', $compound[$cNumber['Compound Class']]);
 								$psClassInsert->execute();
 								$cClass = $db->lastInsertId();
 							}
 						}
 						//Insert in table "compounds" 
-						$psCompoundsInsert->execute(array(':cName'=>$compound[1], ':cFormula'=>$compound[3], ':cOName'=>$compound[0], ':cMass'=>$compound[4],
-															':cPrecursor'=>$compound[5], ':cFrag'=>$compound[8], ':cRT'=>$compound[12], ':cCAS'=>$compound[13], ':cClass'=>$cClass));
+						$psCompoundsInsert->execute(array(':cName'=>$compound[$cNumber['Compound Name']], ':cFormula'=>$compound[$cNumber['Formula']], 
+															':cOName'=>$compound[$cNumber['Other Names']], ':cMass'=>$compound[$cNumber['Mass']],
+															':cPrecursor'=>$compound[$cNumber['Precursor']], ':cFrag'=>$compound[$cNumber['Frag']], 
+															':cCAS'=>$compound[$cNumber['CAS']], ':cClass'=>$cClass,
+															':cayman'=>$compound[$cNumber['Cayman #']]));
 						$cId = $db->lastInsertId();
 					}
 				}
-				if ( ($compound[3]!='') && (!$compoundExisted) )
+				if ( ($compound[$cNumber['Formula']]!='') && (!$compoundExisted) )
 				{
 					//Insert in table Transition
-					$psTransitionInsert->execute(array(':cid'=>$cId, ':tProduct'=>$compound[6], ':tCE'=>$compound[9], ':tAbundance'=>$compound[10], ':tRIInt'=>$compound[11]));
+					$psTransitionInsert->execute(array(':cid'=>$cId, ':tProduct'=>$compound[$cNumber['Product']], ':tCE'=>$compound[$cNumber['CE']], 
+														':tAbundance'=>$compound[$cNumber['Abundance']], ':tRIInt'=>$compound[$cNumber['Relative Ion Intensity']]));
 				}
 			  }
 			fclose($file);
@@ -375,7 +400,7 @@
 			$this->checkVariableNotEmpty($this->requests["cClass"], "Class");
 			$this->userRequestType = "SELECT";
 			
-			$this->sql = "SELECT cOName, cName, class.class, cFormula, cMass, cPrecursor, tProduct, tid, cFrag, tCE, tAbundance, tRIInt, cRT, cCAS
+			$this->sql = "SELECT cOName, cName, class.class, cFormula, cMass, cPrecursor, tProduct, tid, cFrag, tCE, tAbundance, tRIInt, cCAS, cayman
                             FROM class
                             LEFT JOIN compounds ON ( compounds.cClass=class.cid )
                             LEFT JOIN transition ON ( transition.cid=compounds.cid )
@@ -383,7 +408,7 @@
 			$this->arrayOfRequest[0] = $this->requests["cClass"];
 			$result = $this->requestDatabase(true);
 			
-			$title = array('Other Names','Compound Name','Compound Class','Formula','Mass','Precursor','Product','No. of Transitions','Frag','CE','Abundance','Relative Ion Intensity','RT (Zorbax)','CAS');
+			$title = array('Other Names','Compound Name','Compound Class','Formula','Mass','Precursor','Product','No. of Transitions','Frag','CE','Abundance','Relative Ion Intensity', 'CAS', 'Cayman #');
 			$result = $this->returnCSV($result,$title);
 		}	
 
