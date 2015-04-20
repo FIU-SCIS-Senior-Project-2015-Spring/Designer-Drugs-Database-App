@@ -11,19 +11,24 @@
 					<div class="panel-heading">Compound Info</div>
 					<div class="panel-body">
 						<div class="form-group">
-							<div>
-								<input type="file" ng-file-select="onFileSelect($files)" accept="image/*">
-								<img ng-show="dataFiles[0]" ng-src="{{dataFiles[0]}}" class="img-thumbnail" width="120px">
-							</div>
-							<input class="form-control" type="text" placeholder="input Name" ng-model="compName"/>
-							<input class="form-control" type="text" placeholder="input Formula" ng-model="compFormula"/>
-							<input class="form-control" type="text" placeholder="input Other Name" ng-model="otherName"/>
-							<input class="form-control" type="text" placeholder="input Mass" ng-model="compMass"/>
-							<input class="form-control" type="text" placeholder="input Frag" ng-model="compfrag"/>
-							<input class="form-control" type="text" placeholder="input Retention time" ng-model="compRT"/>
-							<input class="form-control" type="text" placeholder="input Precursor" ng-model="compPrec"/>
-							<input class="form-control" type="text" placeholder="input CAS" ng-model="compCAS"/>
-							<select id="selectedClass" ng-model="selectedClass" class="form-control" ng-options="item.label for item in r[0].data track by item.id"></select>
+							<dl class="dl-horizontal">
+								<dt>File:</dt>
+								<dd>
+									<div>
+										<input type="file" ng-file-select="onFileSelect($files)" accept="image/*">
+										<img ng-show="dataFiles[0]" ng-src="{{dataFiles[0]}}" class="img-thumbnail" width="120px">
+									</div>
+								</dd>
+								<dt>Name:</dt><dd><input class="form-control" type="text" placeholder="input Name" ng-model="compName"/></dd>
+								<dt>Formula:</dt><dd><input class="form-control" type="text" placeholder="input Formula" ng-model="compFormula"/></dd>
+								<dt>Cayman #:</dt><dd><input class="form-control" type="text" placeholder="input Cayman Number" ng-model="compCayman"/></dd>
+								<dt>Other Name:</dt><dd><input class="form-control" type="text" placeholder="input Other Name" ng-model="otherName"/></dd>
+								<dt>Mass:</dt><dd><input class="form-control" type="text" placeholder="input Mass" ng-model="compMass"/></dd>
+								<dt>Frag:</dt><dd><input class="form-control" type="text" placeholder="input Frag" ng-model="compfrag"/></dd>
+								<dt>Precursors</dt><dd><input class="form-control" type="text" placeholder="input Precursor" ng-model="compPrec"/></dd>
+								<dt>CAS:</dt><dd><input class="form-control" type="text" placeholder="input CAS" ng-model="compCAS"/></dd>
+								<dt>Class</dt><dd><select id="selectedClass" ng-model="selectedClass" class="form-control" ng-options="item.label for item in r[0].data track by item.id"></select></dd>
+							</dl>
 						</div>
 					</div>
 				</div>
@@ -95,7 +100,7 @@ sys.ctrl = function($scope, $http) {
 	$scope.otherName = "";
 	$scope.compMass = "";
 	$scope.compfrag = "";
-	$scope.compRT = "";
+	$scope.compCayman = "";
 	$scope.compCAS = "";
 	$scope.compPrec = "";	
 	$scope.TransProd = "";
@@ -174,7 +179,7 @@ sys.ctrl = function($scope, $http) {
 		cMass: $scope.compMass,
 		cPrecursor: $scope.compPrec,
 		cFrag: $scope.compfrag,
-		cRT: $scope.compRT,
+		cayman: $scope.compCayman,
 		cCAS: $scope.compCAS,
 		cClass : $scope.selectedClass.id,
 		section:"addComp",

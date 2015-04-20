@@ -16,12 +16,12 @@
 				</div>
 				<div class="panel-body">
 					<p>Formula: {{r[0].data[0].cFormula}}</p>
+					<p>Cayman: {{r[0].data[0].cayman}}</p>
 					<p>Mass: {{r[0].data[0].cMass}}</p>
 					<p>Precursor: {{r[0].data[0].cPrecursor}}</p>
 					<p>Frag: {{r[0].data[0].cFrag}}</p>
-					<p>RT: {{r[0].data[0].cRT}}</p>
 					<p>CAS: {{r[0].data[0].cCAS}}</p>
-					<p>Class: {{r[2].data[r[0].data[0].cClass].label}}</p>
+					<p ng-repeat="class in r[2].data | filter: {id : r[0].data[0].cClass}">Class: {{class.label}}</p>
 				</div>
 			</div>
 		</div>
@@ -62,5 +62,4 @@ sys.q = [
 {method: 'POST',url: 'request/compModuleCall.php?nocache=3',data: { section: 'getTrans', CompId: sys.params.itemId }},
 {method: 'POST',url: 'request/compModuleCall.php?nocache=1',data: { section: 'getClass' }}
 ];
-
 </script>	

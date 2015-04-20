@@ -139,14 +139,14 @@
 			$this->checkisAdminOrLabOP();
 			$this->userRequestType = "INSERT";
 			//sql need it
-			$this->sql = "INSERT INTO compounds (`cName`, `cFormula`, `cOName`, `cMass`, `cPrecursor`, `cFrag`, `cRT`, `cCAS`, `cClass`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			$this->sql = "INSERT INTO compounds (`cName`, `cFormula`, `cOName`, `cMass`, `cPrecursor`, `cFrag`, `cayman`, `cCAS`, `cClass`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 			$this->checkVariableNotEmpty($this->requests["cName"], "Name");
 			$this->checkVariableNotEmpty($this->requests["cFormula"], "Formula");
 			$this->checkVariableNotEmpty($this->requests["cOName"], "Other Names");
 			$this->checkVariableNotEmpty($this->requests["cMass"], "Mass");
 			$this->checkVariableNotEmpty($this->requests["cFrag"], "Frag");
-			$this->checkVariableNotEmpty($this->requests["cRT"], "RT");
+			$this->checkVariableNotEmpty($this->requests["cayman"], "Cayman Number");
 			$this->checkVariableNotEmpty($this->requests["cPrecursor"], "Precursor");
 			$this->checkVariableNotEmpty($this->requests["cCAS"], "CAS");
 			$this->checkVariableNotEmpty($this->requests["cClass"], "Class");
@@ -157,7 +157,7 @@
 			$this->arrayOfRequest[3] = $this->requests["cMass"];
 			$this->arrayOfRequest[4] = $this->requests["cPrecursor"];
 			$this->arrayOfRequest[5] = $this->requests["cFrag"];
-			$this->arrayOfRequest[6] = $this->requests["cRT"];
+			$this->arrayOfRequest[6] = $this->requests["cayman"];
 			$this->arrayOfRequest[7] = $this->requests["cCAS"];
 			$this->arrayOfRequest[8] = $this->requests["cClass"];
 
@@ -170,14 +170,14 @@
 			$this->checkisAdminOrLabOP();
 			$this->userRequestType = "UPDATE";
 			//sql need it
-			$this->sql = "UPDATE compounds SET cName=?, cFormula=?, cOName=?, cMass=?, cPrecursor=?, cFrag=?, cRT=?, cCAS=?, cClass=? WHERE compounds.cid = ?";
+			$this->sql = "UPDATE compounds SET cName=?, cFormula=?, cOName=?, cMass=?, cPrecursor=?, cFrag=?, cayman=?, cCAS=?, cClass=? WHERE compounds.cid = ?";
 
 			$this->checkVariableNotEmpty($this->requests["cName"], "Name");
 			$this->checkVariableNotEmpty($this->requests["cFormula"], "Formula");
 			$this->checkVariableNotEmpty($this->requests["cOName"], "Other Names");
 			$this->checkVariableNotEmpty($this->requests["cMass"], "Mass");
 			$this->checkVariableNotEmpty($this->requests["cFrag"], "Frag");
-			$this->checkVariableNotEmpty($this->requests["cRT"], "RT");
+			$this->checkVariableNotEmpty($this->requests["cayman"], "Cayman Number");
 			$this->checkVariableNotEmpty($this->requests["cPrecursor"], "Precursor");
 			$this->checkVariableNotEmpty($this->requests["cCAS"], "CAS");
 			$this->checkVariableNotEmpty($this->requests["cClass"], "Class");
@@ -189,7 +189,7 @@
 			$this->arrayOfRequest[3] = $this->requests["cMass"];
 			$this->arrayOfRequest[4] = $this->requests["cPrecursor"];
 			$this->arrayOfRequest[5] = $this->requests["cFrag"];
-			$this->arrayOfRequest[6] = $this->requests["cRT"];
+			$this->arrayOfRequest[6] = $this->requests["cayman"];
 			$this->arrayOfRequest[7] = $this->requests["cCAS"];
 			$this->arrayOfRequest[8] = $this->requests["cClass"];
 			$this->arrayOfRequest[9] = $this->requests["cid"];

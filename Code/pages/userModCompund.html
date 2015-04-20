@@ -39,15 +39,17 @@
 					<div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
 						<div class="panel-body">
 							<div class="form-group">
-								<input class="form-control" type="text" placeholder="input Name" ng-model="r[1].data[0].cName"/>
-								<input class="form-control" type="text" placeholder="input Formula" ng-model="r[1].data[0].cFormula"/>
-								<input class="form-control" type="text" placeholder="input Other Name" ng-model="r[1].data[0].cOName"/>
-								<input class="form-control" type="text" placeholder="input Mass" ng-model="r[1].data[0].cMass"/>
-								<input class="form-control" type="text" placeholder="input Frag" ng-model="r[1].data[0].cFrag"/>
-								<input class="form-control" type="text" placeholder="input Retention time" ng-model="r[1].data[0].cRT"/>
-								<input class="form-control" type="text" placeholder="input Precursor" ng-model="r[1].data[0].cPrecursor"/>
-								<input class="form-control" type="text" placeholder="input CAS" ng-model="r[1].data[0].cCAS"/>
-								<select id="selectedClass" ng-model="selectedClass" class="form-control" ng-options="item.label for item in r[0].data track by item.id"></select>
+							<dl class="dl-horizontal">
+								<dt>Name:</dt><dd><input class="form-control" type="text" placeholder="input Name" ng-model="r[1].data[0].cName"/></dd>
+								<dt>Formula:</dt><dd><input class="form-control" type="text" placeholder="input Formula" ng-model="r[1].data[0].cFormula"/></dd>
+								<dt>Cayman:</dt><dd><input class="form-control" type="text" placeholder="input Cayman Number" ng-model="r[1].data[0].cayman"/></dd>
+								<dt>Other Name:</dt><dd><input class="form-control" type="text" placeholder="input Other Name" ng-model="r[1].data[0].cOName"/></dd>
+								<dt>Mass:</dt><dd><input class="form-control" type="text" placeholder="input Mass" ng-model="r[1].data[0].cMass"/></dd>
+								<dt>Frag:</dt><dd><input class="form-control" type="text" placeholder="input Frag" ng-model="r[1].data[0].cFrag"/></dd>
+								<dt>Precursor:</dt><dd><input class="form-control" type="text" placeholder="input Precursor" ng-model="r[1].data[0].cPrecursor"/></dd>
+								<dt>CAS:</dt><dd><input class="form-control" type="text" placeholder="input CAS" ng-model="r[1].data[0].cCAS"/></dd>
+								<dt>Class:</dt><dd><select id="selectedClass" ng-model="selectedClass" class="form-control" ng-options="item.label for item in r[0].data track by item.id"></select></dd>
+							</dl>	
 							</div>
 						</div>
 						<div class="panel-footer">
@@ -224,7 +226,7 @@ sys.ctrl = function($scope, $http) {
 		cMass: $scope.r[1].data[0].cMass,
 		cPrecursor: $scope.r[1].data[0].cPrecursor,
 		cFrag: $scope.r[1].data[0].cFrag,
-		cRT: $scope.r[1].data[0].cRT,
+		cayman: $scope.r[1].data[0].cayman,
 		cCAS: $scope.r[1].data[0].cCAS,
 		cClass : $scope.selectedClass.id,//$scope.r[1].data[0].cClass,
 		cid : $scope.r[1].data[0].cid,
