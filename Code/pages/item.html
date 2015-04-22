@@ -21,7 +21,7 @@
 					<p>Precursor: {{r[0].data[0].cPrecursor}}</p>
 					<p>Frag: {{r[0].data[0].cFrag}}</p>
 					<p>CAS: {{r[0].data[0].cCAS}}</p>
-					<p ng-repeat="class in r[2].data | filter: {id : r[0].data[0].cClass}">Class: {{class.label}}</p>
+					<p ng-repeat="class in r[2].data | filter: {id : r[0].data[0].cClass}:true">Class: {{class.label}}</p>
 				</div>
 			</div>
 		</div>

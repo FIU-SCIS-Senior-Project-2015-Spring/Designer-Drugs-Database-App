@@ -221,20 +221,33 @@
 			$dbName = $this->dbConfig["Name"];
 			$dbUser = $this->dbConfig["User"];
 			$dbPassword = $this->dbConfig["Password"];
+			$csvMimes = array('application/vnd.ms-excel','text/plain','text/csv','text/tsv');
 			
 			$db = new PDO("mysql:host=$dbAddress;dbname=$dbName", $dbUser, $dbPassword);
+				
+			if(!isset($_FILES["file"])){
+				$this->result["Code"] = 3005; 
+				$this->result["CodeDetails"] = "No file found.";
+				$this->returnJson($this->result);
+				exit;
+			}
 
+			if(!in_array($_FILES['file']['type'],$csvMimes)){
+				$this->result["Code"] = 3005; 
+				$this->result["CodeDetails"] = "File is not a csv file, please import a file with csv extension";
+				$this->returnJson($this->result);			
+			}			
+			
 			$fileUpl = $_FILES["file"];
-
-			if ( !$fileUpl["error"] ) 
-			{
+			if ( !$fileUpl["error"] ){
 				$file = fopen($fileUpl["tmp_name"], "r");
+			} else{
+				$this->result["Code"] = 3005; 
+				$this->result["CodeDetails"] = "No file found.";
+				$this->returnJson($this->result);
+				exit;
 			}
-			else 
-			{
-				die("No file");
-			}
-
+						
 			//Prepared statements for class
 			$psClassCheck = $db->prepare("SELECT cid FROM class WHERE class=:class");
 			$psClassInsert = $db->prepare("INSERT INTO class (class) VALUES (:class)");
@@ -251,8 +264,11 @@
 			$cExisted = array();  // List of compounds that already exist and can not be insert
 			$compound = fgetcsv($file); //First row with the titles
 			//Take columns number_format
-			if (count($compound) < 16){
-				//ERROR: Incomplete Data -- Not enought columns
+			if (count($compound) < 14) {
+				$this->result["Code"] = 3005; 
+				$this->result["CodeDetails"] = "File missing a key field";
+				$this->returnJson($this->result);
+				exit;
 			}
 			$cNumber = [];
 			$cNumber['Other Names'] = array_search('Other Names', $compound);
@@ -269,8 +285,16 @@
 			$cNumber['CE'] = array_search('CE', $compound);
 			$cNumber['Abundance'] = array_search('Abundance', $compound);
 			$cNumber['Relative Ion Intensity'] = array_search('Relative Ion Intensity', $compound);
-			$cNumber['CAV'] = array_search('CAV', $compound);
-			$cNumber['Polarity'] = array_search('Polarity', $compound);
+			/*
+			if (in_array(false, $cNumber, true)) {
+				$this->result["Code"] = 3005; 
+				$this->result["CodeDetails"] = "Incomplete Information: missing some key fields,
+				please check that the CSV file contains the following fields:
+				Name, Other Names,CAS, Cayman #, Compound Class, Formula, Mass, Precursor, Product, No. of Transitions, Frag, CE, Abundance, Relative Ion Intensity .";
+				$this->returnJson($this->result);
+				exit;
+			}
+			*/
 			$compoundExisted = true;
 			while( !feof($file) )
 			  {
@@ -328,6 +352,14 @@
 			echo json_encode($cExisted);
 		}	
 		
+		private function diverse_array($vector) { 
+			$result = array(); 
+			foreach($vector as $key1 => $value1) 
+				foreach($value1 as $key2 => $value2) 
+					$result[$key2][$key1] = $value2; 
+			return $result; 
+		} 		
+		
 		private function impPics()
 		{
 			$this->checkisAdmin();
@@ -342,9 +374,9 @@
 
 			
 			$psCompoundCheck = $db->prepare("SELECT cid FROM compounds WHERE cOName=:fileName");
-			$destination = 'img_upload';
+			$destination = '..\img';
 
-			$files = diverse_array($_FILES["files"]);
+			$files = $this->diverse_array($_FILES["files"]);
 
 			foreach ($files as $file) {
 				if (!$file["error"]) {
@@ -364,14 +396,6 @@
 			}
 
 			// http://php.net/manual/en/reserved.variables.files.php#109958
-			function diverse_array($vector) { 
-				$result = array(); 
-				foreach($vector as $key1 => $value1) 
-					foreach($value1 as $key2 => $value2) 
-						$result[$key2][$key1] = $value2; 
-				return $result; 
-			} 
-
 /*			
 			$destination = '../img';
 
@@ -648,7 +672,7 @@
 						if($returnValue == true) return $this->result["data"]["lastRecordId"];
 					}
 					
-					if ($stmt->rowCount()<=0){
+					if (($stmt->rowCount()<=0)&&($returnValue == false)){
 						$this->result["Code"] = 1006;
 						$this->result["CodeDetails"] = "user data has not been updated";
 						$this->returnJson($this->result);

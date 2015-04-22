@@ -59,8 +59,8 @@ sys.ctrl = function($scope, $http) {
 	$scope.uploadCSV = function(){
 		var formData = new FormData();
 		//Append files
-		formData.append('file', $scope.file);
-
+		if ($scope.file !="") formData.append('file', $scope.file);
+		
 		
 		//Upload
 		$.ajax({
@@ -71,7 +71,9 @@ sys.ctrl = function($scope, $http) {
 		  contentType: false,   // tell jQuery not to set contentType
 		  transformRequest: angular.identity
 		}).done(function(json, status, headers, config) {
-			json = JSON.parse(json);
+			//console.log(json);
+			//json = JSON.parse(json);
+			//console.log(json);
 			//console.log(json);
 			//console.log(json.length+"here");
 			if((json["Code"] > 2000 && json["Code"] < 3000) ||json["Code"] == 1005) $scope.go("/home");
@@ -98,7 +100,8 @@ sys.ctrl = function($scope, $http) {
 				$('#mMessgText').text(json["CodeDetails"]);
 				$('#mMessg').modal('show');	
 			}
-		});		
+		});
+		
 	}
 	
 	$scope.onCSVFileSelect = function($files) {
