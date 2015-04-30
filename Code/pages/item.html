@@ -4,7 +4,7 @@
 		<div class=" col-sm-4 col-md-offset-1">
 			<div class="panel panel-primary">
 				<div class="panel-body">
-					<img ng-src="img/{{r[0].data[0].cFormula}}.jpg" class="img-thumbnail" style="max-width:100%;">
+					<img ng-src="img/{{r[0].data[0].cOName}}.jpg" class="img-thumbnail" style="max-width:100%;">
 				</div>
 			</div>
 		</div>
@@ -16,12 +16,11 @@
 				</div>
 				<div class="panel-body">
 					<p>Formula: {{r[0].data[0].cFormula}}</p>
-					<p>Cayman: {{r[0].data[0].cayman}}</p>
 					<p>Mass: {{r[0].data[0].cMass}}</p>
 					<p>Precursor: {{r[0].data[0].cPrecursor}}</p>
 					<p>Frag: {{r[0].data[0].cFrag}}</p>
 					<p>CAS: {{r[0].data[0].cCAS}}</p>
-					<p ng-repeat="class in r[2].data | filter: {id : r[0].data[0].cClass}:true">Class: {{class.label}}</p>
+					<p>CAV: {{r[0].data[0].cCAV}}</p>
 				</div>
 			</div>
 		</div>

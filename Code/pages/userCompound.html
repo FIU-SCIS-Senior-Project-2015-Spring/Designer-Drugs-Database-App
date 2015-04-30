@@ -15,7 +15,6 @@
 			<div class="panel-footer">
 				<a ng-href="#userAddComp" class="btn btn-info" >Add New</a>
 				<a ng-href="" ng-click="gotoImportPage()" class="btn btn-info" >Import</a>
-				<a ng-href="" ng-click="gotoClassesPage()" class="btn btn-info" >Comp. Classes</a>
 			</div>
 		</div>
 	</div>
@@ -81,10 +80,6 @@ sys.ctrl = function($scope, $http) {
 
 	$scope.gotoImportPage= function(){
 		$scope.go("/importCompounds");
-	}
-	
-	$scope.gotoClassesPage= function(){
-		$scope.go("/manageClasses");
 	}
 
 }

@@ -21,13 +21,12 @@
 								</dd>
 								<dt>Name:</dt><dd><input class="form-control" type="text" placeholder="input Name" ng-model="compName"/></dd>
 								<dt>Formula:</dt><dd><input class="form-control" type="text" placeholder="input Formula" ng-model="compFormula"/></dd>
-								<dt>Cayman #:</dt><dd><input class="form-control" type="text" placeholder="input Cayman Number" ng-model="compCayman"/></dd>
 								<dt>Other Name:</dt><dd><input class="form-control" type="text" placeholder="input Other Name" ng-model="otherName"/></dd>
 								<dt>Mass:</dt><dd><input class="form-control" type="text" placeholder="input Mass" ng-model="compMass"/></dd>
 								<dt>Frag:</dt><dd><input class="form-control" type="text" placeholder="input Frag" ng-model="compfrag"/></dd>
 								<dt>Precursors</dt><dd><input class="form-control" type="text" placeholder="input Precursor" ng-model="compPrec"/></dd>
 								<dt>CAS:</dt><dd><input class="form-control" type="text" placeholder="input CAS" ng-model="compCAS"/></dd>
-								<dt>Class</dt><dd><select id="selectedClass" ng-model="selectedClass" class="form-control" ng-options="item.label for item in r[0].data track by item.id"></select></dd>
+								<dt>CAV:</dt><dd><input class="form-control" type="text" placeholder="input CAV" ng-model="compCAV"/></dd>
 							</dl>
 						</div>
 					</div>
@@ -87,10 +86,6 @@
 </div><!-- /.modal -->
 
 <script>
-sys.q = [
-	{method: 'POST',url: 'request/compModuleCall.php',data: { section: 'getClass' }}
-];
-
 sys.ctrl = function($scope, $http) {
 	$scope.checkUserData();
 
@@ -100,7 +95,7 @@ sys.ctrl = function($scope, $http) {
 	$scope.otherName = "";
 	$scope.compMass = "";
 	$scope.compfrag = "";
-	$scope.compCayman = "";
+	$scope.compCAV = "";
 	$scope.compCAS = "";
 	$scope.compPrec = "";	
 	$scope.TransProd = "";
@@ -109,7 +104,6 @@ sys.ctrl = function($scope, $http) {
 	$scope.TransInt = "";
 	$scope.modalAction = "";
 	$scope.editId = "";
-	$scope.selectedClass = "";
 	//$scope.file  = "";
 	$scope.listFiles = [];
 	$scope.dataFiles = [];
@@ -179,9 +173,8 @@ sys.ctrl = function($scope, $http) {
 		cMass: $scope.compMass,
 		cPrecursor: $scope.compPrec,
 		cFrag: $scope.compfrag,
-		cayman: $scope.compCayman,
+		cCAV: $scope.compCAV,
 		cCAS: $scope.compCAS,
-		cClass : $scope.selectedClass.id,
 		section:"addComp",
 		Trans: $scope.compTrans})
 		.success(function(json) {

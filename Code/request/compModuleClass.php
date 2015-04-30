@@ -71,18 +71,6 @@
 				break;
 			case 'impComp':		$this->impComp();	
 				break;
-			case 'expComp':		$this->expComp();	
-				break;
-			case 'getClass':	$this->getClass(); 				
-				break;
-			case 'getClassCount':	$this->getClassCount(); 				
-				break;
-			case 'addClass':	$this->addClass(); 	
-				break;
-			case 'editClass':	$this->editClass();	
-				break;
-			case 'deleteClass':	$this->deleteClass();	
-				break;				
 			case 'getTrans':	$this->getTrans(); 				
 				break;
 			case 'addTrans':	$this->addTrans(); 	
@@ -139,17 +127,16 @@
 			$this->checkisAdminOrLabOP();
 			$this->userRequestType = "INSERT";
 			//sql need it
-			$this->sql = "INSERT INTO compounds (`cName`, `cFormula`, `cOName`, `cMass`, `cPrecursor`, `cFrag`, `cayman`, `cCAS`, `cClass`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			$this->sql = "INSERT INTO compounds (`cName`, `cFormula`, `cOName`, `cMass`, `cPrecursor`, `cFrag`, `cCAV`, `cCAS`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
 			$this->checkVariableNotEmpty($this->requests["cName"], "Name");
 			$this->checkVariableNotEmpty($this->requests["cFormula"], "Formula");
 			$this->checkVariableNotEmpty($this->requests["cOName"], "Other Names");
 			$this->checkVariableNotEmpty($this->requests["cMass"], "Mass");
 			$this->checkVariableNotEmpty($this->requests["cFrag"], "Frag");
-			$this->checkVariableNotEmpty($this->requests["cayman"], "Cayman Number");
+			$this->checkVariableNotEmpty($this->requests["cCAV"], "CAV");
 			$this->checkVariableNotEmpty($this->requests["cPrecursor"], "Precursor");
 			$this->checkVariableNotEmpty($this->requests["cCAS"], "CAS");
-			$this->checkVariableNotEmpty($this->requests["cClass"], "Class");
 
 			$this->arrayOfRequest[0] = $this->requests["cName"];
 			$this->arrayOfRequest[1] = $this->requests["cFormula"];
@@ -157,9 +144,8 @@
 			$this->arrayOfRequest[3] = $this->requests["cMass"];
 			$this->arrayOfRequest[4] = $this->requests["cPrecursor"];
 			$this->arrayOfRequest[5] = $this->requests["cFrag"];
-			$this->arrayOfRequest[6] = $this->requests["cayman"];
+			$this->arrayOfRequest[6] = $this->requests["cCAV"];
 			$this->arrayOfRequest[7] = $this->requests["cCAS"];
-			$this->arrayOfRequest[8] = $this->requests["cClass"];
 
 			$this->addTranswithCompID($this->requestDatabase(true));
 		}		
@@ -170,17 +156,16 @@
 			$this->checkisAdminOrLabOP();
 			$this->userRequestType = "UPDATE";
 			//sql need it
-			$this->sql = "UPDATE compounds SET cName=?, cFormula=?, cOName=?, cMass=?, cPrecursor=?, cFrag=?, cayman=?, cCAS=?, cClass=? WHERE compounds.cid = ?";
+			$this->sql = "UPDATE compounds SET cName=?, cFormula=?, cOName=?, cMass=?, cPrecursor=?, cFrag=?, cCAV=?, cCAS=? WHERE compounds.cid = ?";
 
 			$this->checkVariableNotEmpty($this->requests["cName"], "Name");
 			$this->checkVariableNotEmpty($this->requests["cFormula"], "Formula");
 			$this->checkVariableNotEmpty($this->requests["cOName"], "Other Names");
 			$this->checkVariableNotEmpty($this->requests["cMass"], "Mass");
 			$this->checkVariableNotEmpty($this->requests["cFrag"], "Frag");
-			$this->checkVariableNotEmpty($this->requests["cayman"], "Cayman Number");
+			$this->checkVariableNotEmpty($this->requests["cCAV"], "CAV");
 			$this->checkVariableNotEmpty($this->requests["cPrecursor"], "Precursor");
 			$this->checkVariableNotEmpty($this->requests["cCAS"], "CAS");
-			$this->checkVariableNotEmpty($this->requests["cClass"], "Class");
 			$this->checkVariableNotEmpty($this->requests["cid"], "Compound Id");
 			
 			$this->arrayOfRequest[0] = $this->requests["cName"];
@@ -189,9 +174,8 @@
 			$this->arrayOfRequest[3] = $this->requests["cMass"];
 			$this->arrayOfRequest[4] = $this->requests["cPrecursor"];
 			$this->arrayOfRequest[5] = $this->requests["cFrag"];
-			$this->arrayOfRequest[6] = $this->requests["cayman"];
+			$this->arrayOfRequest[6] = $this->requests["cCAV"];
 			$this->arrayOfRequest[7] = $this->requests["cCAS"];
-			$this->arrayOfRequest[8] = $this->requests["cClass"];
 			$this->arrayOfRequest[9] = $this->requests["cid"];
 			
 			$this->requestDatabase(false);
@@ -249,12 +233,16 @@
 			}
 						
 			//Prepared statements for class
-			$psClassCheck = $db->prepare("SELECT cid FROM class WHERE class=:class");
-			$psClassInsert = $db->prepare("INSERT INTO class (class) VALUES (:class)");
+			//$psClassCheck = $db->prepare("SELECT cid FROM class WHERE class=:class");
+			//$psClassInsert = $db->prepare("INSERT INTO class (class) VALUES (:class)");
 			//Prepared statements for compounds
 			$psCompoundsCheck = $db->prepare("SELECT cid FROM compounds WHERE cOName=:cOName");
+			/*
 			$psCompoundsInsert = $db->prepare("INSERT INTO compounds (cName, cFormula, cOName, cMass, cPrecursor, cFrag, cCAS, cClass, cayman) 
 															VALUES (:cName, :cFormula, :cOName, :cMass, :cPrecursor, :cFrag, :cCAS, :cClass, :cayman)");
+			*/
+			$psCompoundsInsert = $db->prepare("INSERT INTO compounds (cName, cFormula, cOName, cMass, cPrecursor, cFrag, cCAS, cCAV) 
+															VALUES (:cName, :cFormula, :cOName, :cMass, :cPrecursor, :cFrag, :cCAS, :CAV)");
 			//Prepared statements for transition
 			$psTransitionInsert = $db->prepare("INSERT INTO transition (cid, tProduct, tCE, tAbundance, tRIInt) 
 												VALUES (:cid, :tProduct, :tCE, :tAbundance, :tRIInt)");
@@ -264,7 +252,7 @@
 			$cExisted = array();  // List of compounds that already exist and can not be insert
 			$compound = fgetcsv($file); //First row with the titles
 			//Take columns number_format
-			if (count($compound) < 14) {
+			if (count($compound) < 12) {
 				$this->result["Code"] = 3005; 
 				$this->result["CodeDetails"] = "File missing a key field";
 				$this->returnJson($this->result);
@@ -274,13 +262,14 @@
 			$cNumber['Other Names'] = array_search('Other Names', $compound);
 			$cNumber['Compound Name'] = array_search('Compound Name', $compound);
 			$cNumber['CAS'] = array_search('CAS', $compound);
-			$cNumber['Cayman #'] = array_search('Cayman #', $compound);
-			$cNumber['Compound Class'] = array_search('Compound Class', $compound);
+			//$cNumber['Cayman #'] = array_search('Cayman #', $compound);
+			//$cNumber['Compound Class'] = array_search('Compound Class', $compound);
 			$cNumber['Formula'] = array_search('Formula', $compound);
 			$cNumber['Mass'] = array_search('Mass', $compound);
 			$cNumber['Precursor'] = array_search('Precursor', $compound);
 			$cNumber['Product'] = array_search('Product', $compound);
-			$cNumber['No. of Transitions'] = array_search('No. of Transitions', $compound);
+			//$cNumber['No. of Transitions'] = array_search('No. of Transitions', $compound);
+			$cNumber['CAV'] = array_search('CAV', $compound);
 			$cNumber['Frag'] = array_search('Frag', $compound);
 			$cNumber['CE'] = array_search('CE', $compound);
 			$cNumber['Abundance'] = array_search('Abundance', $compound);
@@ -317,6 +306,7 @@
 					{
 						$compoundExisted = false;
 						//Check id exist the "class", else insert class and take id
+						/*
 						if ( $compound[$cNumber['Compound Class']] != '')
 						{
 							$psClassCheck->bindParam(':class', $compound[$cNumber['Compound Class']]);
@@ -330,12 +320,19 @@
 								$cClass = $db->lastInsertId();
 							}
 						}
-						//Insert in table "compounds" 
+						*/
+						//Insert in table "compounds"
+						/*						
 						$psCompoundsInsert->execute(array(':cName'=>$compound[$cNumber['Compound Name']], ':cFormula'=>$compound[$cNumber['Formula']], 
 															':cOName'=>$compound[$cNumber['Other Names']], ':cMass'=>$compound[$cNumber['Mass']],
 															':cPrecursor'=>$compound[$cNumber['Precursor']], ':cFrag'=>$compound[$cNumber['Frag']], 
 															':cCAS'=>$compound[$cNumber['CAS']], ':cClass'=>$cClass,
 															':cayman'=>$compound[$cNumber['Cayman #']]));
+						*/									
+						$psCompoundsInsert->execute(array(':cName'=>$compound[$cNumber['Compound Name']], ':cFormula'=>$compound[$cNumber['Formula']], 
+															':cOName'=>$compound[$cNumber['Other Names']], ':cMass'=>$compound[$cNumber['Mass']],
+															':cPrecursor'=>$compound[$cNumber['Precursor']], ':cFrag'=>$compound[$cNumber['Frag']], 
+															':cCAS'=>$compound[$cNumber['CAS']], ':CAV'=>$compound[$cNumber['CAV']]));
 						$cId = $db->lastInsertId();
 					}
 				}
@@ -391,6 +388,7 @@
 					{
 						//The compound exist, save file
 						move_uploaded_file($tmp_name, "$destination/$name");
+						//php.ini  default=20 linux:etc max_file_upload = 20 Reset Apache
 					}
 				}
 			}
@@ -419,76 +417,6 @@
 			$this->returnJson($this->result);
 */		}
 		
-		private function expComp()
-		{
-			$this->checkVariableNotEmpty($this->requests["cClass"], "Class");
-			$this->userRequestType = "SELECT";
-			
-			$this->sql = "SELECT cOName, cName, class.class, cFormula, cMass, cPrecursor, tProduct, tid, cFrag, tCE, tAbundance, tRIInt, cCAS, cayman
-                            FROM class
-                            LEFT JOIN compounds ON ( compounds.cClass=class.cid )
-                            LEFT JOIN transition ON ( transition.cid=compounds.cid )
-                            WHERE class.cid=?";
-			$this->arrayOfRequest[0] = $this->requests["cClass"];
-			$result = $this->requestDatabase(true);
-			
-			$title = array('Other Names','Compound Name','Compound Class','Formula','Mass','Precursor','Product','No. of Transitions','Frag','CE','Abundance','Relative Ion Intensity', 'CAS', 'Cayman #');
-			$result = $this->returnCSV($result,$title);
-		}	
-
-		private function getClass()
-		{
-			$this->userRequestType = "SELECT";
-			$this->sql = "SELECT cid AS id, class AS label FROM class";
-			$this->requestDatabase(false);
-		}
-
-		private function getClassCount()
-		{
-			$this->checkisAdminOrLabOP();
-			$this->userRequestType = "SELECT";
-			
-			$this->checkVariableNotEmpty($this->requests["cClass"], "Class");
-			$this->sql = "SELECT COUNT(*) AS count FROM compounds WHERE compounds.cClass = ?";
-			$this->arrayOfRequest[0] = $this->requests["cClass"];
-			$this->requestDatabase(false);
-		}
-
-		private function addClass()
-		{
-			$this->checkisAdminOrLabOP();			
-			$this->checkVariableNotEmpty($this->requests["cClass"], "Class");
-			$this->userRequestType = "INSERT";
-			
-			$this->sql = "INSERT INTO class ( `class`) VALUES (?)";
-			$this->arrayOfRequest[0] = $this->requests["cClass"];
-			$this->requestDatabase(false);
-		}		
-
-		private function editClass()
-		{
-			$this->checkisAdminOrLabOP();
-			$this->checkVariableNotEmpty($this->requests["cClass"], "Class");
-			$this->checkVariableNotEmpty($this->requests["cid"], "Class id");
-			$this->userRequestType = "UPDATE";
-			
-			$this->sql = "UPDATE class SET class=? WHERE class.cid = ?";
-			$this->arrayOfRequest[0] = $this->requests["cClass"];
-			$this->arrayOfRequest[1] = $this->requests["cid"];
-			$this->requestDatabase(false);
-		}	
-
-		private function deleteClass()
-		{
-			$this->checkisAdminOrLabOP();
-			$this->checkVariableNotEmpty($this->requests["cid"], "Class id");	
-			$this->userRequestType = "DELETE"; 
-			
-			$this->sql = "DELETE FROM class WHERE class.cid = ?";
-			$this->arrayOfRequest[0] = $this->requests["cid"];			
-			$this->requestDatabase(false);
-		}	
-
 		private function getTrans()
 		{
 			$this->checkVariableNotEmpty($this->requests["CompId"], "Compound id");

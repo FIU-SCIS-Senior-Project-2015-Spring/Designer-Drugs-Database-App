@@ -9,8 +9,7 @@
 			<div class="panel-body">
 				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 				  <div class="panel panel-primary">
-					<div class="panel-heading" role="tab" id="headingOne">
-					  <h4 class="panel-title">
+					<div class="panel-heading" role="tab" id="headingOne">					  <h4 class="panel-title">
 						<a data-toggle="collapse" data-parent="#accordion" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
 						  Compound Picture
 						</a>
@@ -19,7 +18,7 @@
 					<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
 						<div class="panel-body">
 							<input type="file" ng-file-select="onFileSelect($files)" accept="image/*">
-							<img ng-show="!dataFiles.length" ng-src="img/{{r[1].data[0].cFormula}}.jpg" class="img-thumbnail" width="120px">
+							<img ng-show="!dataFiles.length" ng-src="img/{{r[1].data[0].cOName}}.jpg" class="img-thumbnail" width="120px">
 							<img ng-show="dataFiles.length" ng-src="{{dataFiles[0]}}" class="img-thumbnail" width="120px">
 						</div>
 						<div class="panel-footer">
@@ -42,13 +41,12 @@
 							<dl class="dl-horizontal">
 								<dt>Name:</dt><dd><input class="form-control" type="text" placeholder="input Name" ng-model="r[1].data[0].cName"/></dd>
 								<dt>Formula:</dt><dd><input class="form-control" type="text" placeholder="input Formula" ng-model="r[1].data[0].cFormula"/></dd>
-								<dt>Cayman:</dt><dd><input class="form-control" type="text" placeholder="input Cayman Number" ng-model="r[1].data[0].cayman"/></dd>
 								<dt>Other Name:</dt><dd><input class="form-control" type="text" placeholder="input Other Name" ng-model="r[1].data[0].cOName"/></dd>
 								<dt>Mass:</dt><dd><input class="form-control" type="text" placeholder="input Mass" ng-model="r[1].data[0].cMass"/></dd>
 								<dt>Frag:</dt><dd><input class="form-control" type="text" placeholder="input Frag" ng-model="r[1].data[0].cFrag"/></dd>
 								<dt>Precursor:</dt><dd><input class="form-control" type="text" placeholder="input Precursor" ng-model="r[1].data[0].cPrecursor"/></dd>
 								<dt>CAS:</dt><dd><input class="form-control" type="text" placeholder="input CAS" ng-model="r[1].data[0].cCAS"/></dd>
-								<dt>Class:</dt><dd><select id="selectedClass" ng-model="selectedClass" class="form-control" ng-options="item.label for item in r[0].data track by item.id"></select></dd>
+								<dt>CAV:</dt><dd><input class="form-control" type="text" placeholder="input CAV" ng-model="r[1].data[0].cCAV"/></dd>
 							</dl>	
 							</div>
 						</div>
@@ -68,7 +66,7 @@
 					</div>
 					<div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
 						<div class="panel-body">
-							<div class="panel panel-primary" ng-repeat="item in r[2].data">
+							<div class="panel panel-primary" ng-repeat="item in r[0].data">
 								<div class="panel-heading">Transition # {{$index}}</div>
 								<div class="panel-body">
 									Product: {{item.tProduct}}</br>
@@ -124,9 +122,8 @@
 <script>
 
 sys.q = [
-{method: 'POST',url: 'request/compModuleCall.php?nocache=1',data: { section: 'getClass' }},
-{method: 'POST',url: 'request/compModuleCall.php?nocache=2',data: { section: 'getCompbyId', id: sys.params.itemId}},
-{method: 'POST',url: 'request/compModuleCall.php?nocache=3',data: { section: 'getTrans', CompId: sys.params.itemId }}
+{method: 'POST',url: 'request/compModuleCall.php?nocache=3',data: { section: 'getTrans', CompId: sys.params.itemId }},
+{method: 'POST',url: 'request/compModuleCall.php?nocache=2',data: { section: 'getCompbyId', id: sys.params.itemId}}
 ];
 
 
@@ -226,7 +223,7 @@ sys.ctrl = function($scope, $http) {
 		cMass: $scope.r[1].data[0].cMass,
 		cPrecursor: $scope.r[1].data[0].cPrecursor,
 		cFrag: $scope.r[1].data[0].cFrag,
-		cayman: $scope.r[1].data[0].cayman,
+		cCAV: $scope.r[1].data[0].cCAV,
 		cCAS: $scope.r[1].data[0].cCAS,
 		cClass : $scope.selectedClass.id,//$scope.r[1].data[0].cClass,
 		cid : $scope.r[1].data[0].cid,

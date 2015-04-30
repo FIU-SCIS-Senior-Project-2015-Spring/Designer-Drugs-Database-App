@@ -1,17 +1,7 @@
 <div class="container col-md-8 col-md-offset-2">
 
 	<div class="row">
-		<div class="container col-md-12">
-			<div class="panel panel-primary"><div class="panel-body">
-			<img class="featuredImg center-block" src="img/1.jpg" style="max-height:140px;max-width:100%;">
-			</div></div>
-		</div>		
-	</div>
-	
-	<p/>
-
-	<div class="row">
-		<div class="col-sm-5">
+		<div class="col-sm-12">
 			<div class="form-group">
 				<div class="input-group">
 					<input class="form-control" type="text" placeholder="input formula or name" ng-model="SearchCriteria"/>
@@ -19,29 +9,14 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-md-2"></div>
-		<div class="col-sm-5">
-			<div class="panel panel-primary">
-			  <div class="panel-heading">
-			  
-			  <form class="form-inline">
-  <div class="form-group">
-	<label for="exampleInputName2">Compound Classes</label>
-				<input type="text" placeholder="Filter" ng-model="q" class="input-sm form-control col-black">
-  </div>
-  </form>
-			  
-			  </div>
-			  <div class="panel-body" style="max-height: 120px;overflow-y: scroll;">
-				<ul class="list-group">
-				  <a href="#home" class="list-group-item" ng-repeat="items in r[0].data | filter:q as results" ng-click="download($index)">
-				  <button type="button" class="btn btn-default badge" ng-click="download($index)"><span class="glyphicon glyphicon-download-alt"></span></button>
-					{{items.label}}
-				  </a>
-				</ul>
-			  </div>
-			</div>			
-		</div>
+	</div>
+
+	<div class="row">
+		<div class="container col-md-12">
+			<div class="panel panel-primary"><div class="panel-body">
+			<img class="featuredImg center-block" src="img/1.jpg" style="max-height:140px;max-width:100%;">
+			</div></div>
+		</div>		
 	</div>
 </div>
 
