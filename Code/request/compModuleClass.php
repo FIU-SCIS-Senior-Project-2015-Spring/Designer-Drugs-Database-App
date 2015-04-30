@@ -31,7 +31,7 @@
 		{
 			$this->checkVariableNotEmpty($this->requests["section"], "Section");
 			//check if user has admin permission to continue unless requesting its own data
-			if($this->requests["section"] != "getComp" &&$this->requests["section"] != "getCompbyId" && $this->requests["section"] != "getClass"&& $this->requests["section"] != "getPrec"&& $this->requests["section"] != "expComp") {
+			if($this->requests["section"] != "getComp" &&$this->requests["section"] != "getCompbyId" && $this->requests["section"] != "getClass" && $this->requests["section"] != "getTrans" && $this->requests["section"] != "getPrec"&& $this->requests["section"] != "expComp") {
 					//load authModule class
 					include("authModuleClass.php");	
 
