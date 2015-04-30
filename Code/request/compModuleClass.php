@@ -128,7 +128,6 @@
 			$this->userRequestType = "INSERT";
 			//sql need it
 			$this->sql = "INSERT INTO compounds (`cName`, `cFormula`, `cOName`, `cMass`, `cPrecursor`, `cFrag`, `cCAV`, `cCAS`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
 			$this->checkVariableNotEmpty($this->requests["cName"], "Name");
 			$this->checkVariableNotEmpty($this->requests["cFormula"], "Formula");
 			$this->checkVariableNotEmpty($this->requests["cOName"], "Other Names");
@@ -162,9 +161,9 @@
 			$this->checkVariableNotEmpty($this->requests["cFormula"], "Formula");
 			$this->checkVariableNotEmpty($this->requests["cOName"], "Other Names");
 			$this->checkVariableNotEmpty($this->requests["cMass"], "Mass");
-			$this->checkVariableNotEmpty($this->requests["cFrag"], "Frag");
-			$this->checkVariableNotEmpty($this->requests["cCAV"], "CAV");
 			$this->checkVariableNotEmpty($this->requests["cPrecursor"], "Precursor");
+						$this->checkVariableNotEmpty($this->requests["cFrag"], "Frag");
+			$this->checkVariableNotEmpty($this->requests["cCAV"], "CAV");
 			$this->checkVariableNotEmpty($this->requests["cCAS"], "CAS");
 			$this->checkVariableNotEmpty($this->requests["cid"], "Compound Id");
 			
