@@ -156,16 +156,16 @@
 			$this->userRequestType = "UPDATE";
 			//sql need it
 			$this->sql = "UPDATE compounds SET cName=?, cFormula=?, cOName=?, cMass=?, cPrecursor=?, cFrag=?, cCAV=?, cCAS=? WHERE compounds.cid = ?";
-
+			
 			$this->checkVariableNotEmpty($this->requests["cName"], "Name");
 			$this->checkVariableNotEmpty($this->requests["cFormula"], "Formula");
 			$this->checkVariableNotEmpty($this->requests["cOName"], "Other Names");
 			$this->checkVariableNotEmpty($this->requests["cMass"], "Mass");
 			$this->checkVariableNotEmpty($this->requests["cPrecursor"], "Precursor");
-						$this->checkVariableNotEmpty($this->requests["cFrag"], "Frag");
+			$this->checkVariableNotEmpty($this->requests["cFrag"], "Frag");
 			$this->checkVariableNotEmpty($this->requests["cCAV"], "CAV");
 			$this->checkVariableNotEmpty($this->requests["cCAS"], "CAS");
-			$this->checkVariableNotEmpty($this->requests["cid"], "Compound Id");
+			$this->checkVariableNotEmpty($this->requests["cid"], "Compound Id");						
 			
 			$this->arrayOfRequest[0] = $this->requests["cName"];
 			$this->arrayOfRequest[1] = $this->requests["cFormula"];
@@ -175,8 +175,8 @@
 			$this->arrayOfRequest[5] = $this->requests["cFrag"];
 			$this->arrayOfRequest[6] = $this->requests["cCAV"];
 			$this->arrayOfRequest[7] = $this->requests["cCAS"];
-			$this->arrayOfRequest[9] = $this->requests["cid"];
-			
+			$this->arrayOfRequest[8] = $this->requests["cid"];
+						
 			$this->requestDatabase(false);
 		}	
 

@@ -236,12 +236,9 @@ sys.ctrl = function($scope, $http) {
 				$('#mMessg').modal('show');
 				//$scope.go("/userCompound");
 				}else{
-				$('#mMessgTitle').text("Success.");		
-				$('#mMessgText').text("Compound has been updated.");
-				$('#mMessg').modal('show');
-				//$('#mMessgTitle').text("Acction cannot be processed.");		
-				//$('#mMessgText').text(json["CodeDetails"]);
-				//$('#mMessg').modal('show');	
+				$('#mMessgTitle').text("Acction cannot be processed.");		
+				$('#mMessgText').text(json["CodeDetails"]);
+				$('#mMessg').modal('show');	
 			}
 		});
 	}	

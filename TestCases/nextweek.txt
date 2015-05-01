@@ -1,0 +1,21 @@
+next week 
+refine user stories, starts with this user dows...
+sound initial design
+high level architecture,
+detail design
+deplyment diagram
+class diagram
+sequence diagram
+
+feasabiluty sudy
+
+
+
+need to be scalable
+
+
+
+sequence diagrams : 101-105
+state chart diagram : 107 
+activity diagram: 108
+state vs activity : 109
