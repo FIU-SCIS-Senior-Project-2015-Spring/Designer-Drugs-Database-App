@@ -94,10 +94,16 @@
 			$this->checkVariableNotEmpty($this->requests["searchCriteria"], "Search criteria");
 			$this->userRequestType = "SELECT"; 
 			//sql need it
-			$this->sql = "SELECT * FROM compounds WHERE compounds.cName= ? OR compounds.cFormula=? OR compounds.cOName = ?";
-			$this->arrayOfRequest[0] = $this->requests["searchCriteria"];
-			$this->arrayOfRequest[1] = $this->requests["searchCriteria"];
-			$this->arrayOfRequest[2] = $this->requests["searchCriteria"];
+			//$this->sql = "SELECT * FROM compounds WHERE compounds.cName= ? OR compounds.cFormula=? OR compounds.cOName = ?";
+			
+			
+			$this->sql = "SELECT * FROM compounds WHERE compounds.cName LIKE ? OR compounds.cFormula LIKE ? OR compounds.cOName  LIKE ?";
+			//echo $this->sql;
+			//exit;			
+			
+			$this->arrayOfRequest[0] = '%'.$this->requests["searchCriteria"].'%';
+			$this->arrayOfRequest[1] = '%'.$this->requests["searchCriteria"].'%';
+			$this->arrayOfRequest[2] = '%'.$this->requests["searchCriteria"].'%';
 			$this->requestDatabase(false);
 		}
 		
